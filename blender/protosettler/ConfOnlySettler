@@ -1,0 +1,9 @@
+
+import bpy
+
+settmats = ["BeltBuckle", "BlueShirt", "Eyeball bl", "Eyeball wh", "SettlerHair", "SettlerSkin", "ShoeLeather"]
+
+for matname in settmats:
+	
+    bpy.data.materials[matname].use_cast_shadows_only = False
+    bpy.data.materials[matname].use_raytrace = False
