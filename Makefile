@@ -17,27 +17,21 @@ gfx/terrain/grass.png: render/terrain/grass.png
 	mkdir -p "$(dir $@)"
 	python scripts/postprocess_texture.py "$^" "$@"
 
-gfx/protosettler.png: render/protosettler/noshd-0001.png render/protosettler/onlshd-0001.png
+gfx/protosettler.png: render/protosettler/noshd-001.png render/protosettler/onlshd-001.png
 	mkdir -p "$(dir $@)"
 	python scripts/postprocess_settler.py "$(dir $<)" "$@" 1 156
 
 render/terrain/grass.png: blender/terrain/grass.blend
-	# somehow the new blender produces shity filenames, when using the # as placeholder
-	# for the framenumber of the render-output
-	# dear Blender developers, please fix this! :)
-	#$(BLENDER) -b "$^" -o "$(subst .png,#.png,$@)" -f 1
-	$(BLENDER) -b "$^" -o "$(subst .png,,$@)" -f 1
-	mv "$(subst .png,0001.png,$@)" "$@"
+	$(BLENDER) -b "$^" -o "$(subst .png,#.png,$@)" -f 1
+	mv "$(subst .png,1.png,$@)" "$@"
 
-render/protosettler/noshd-0001.png: blender/protosettler/protosettler.blend
+render/protosettler/noshd-001.png: blender/protosettler/protosettler.blend
 	mkdir -p "$(dir $@)"
-	#$(BLENDER) -b "$^" -o "$(subst 001.png,###.png,$@)" -P blender/protosettler/ConfOnlySettler -s 1 -e 156 -a
-	$(BLENDER) -b "$^" -o "$(subst 0001.png,,$@)" -P blender/protosettler/ConfOnlySettler -s 1 -e 156 -a
+	$(BLENDER) -b "$^" -o "$(subst 001.png,###.png,$@)" -P blender/protosettler/ConfOnlySettler -s 1 -e 156 -a
 
-render/protosettler/onlshd-0001.png: blender/protosettler/protosettler.blend
+render/protosettler/onlshd-001.png: blender/protosettler/protosettler.blend
 	mkdir -p "$(dir $@)"
-	#$(BLENDER) -b "$^" -o "$(subst 0001.png,###.png,$@)" -P blender/protosettler/ConfOnlyShadow -s 1 -e 156 -a
-	$(BLENDER) -b "$^" -o "$(subst 0001.png,,$@)" -P blender/protosettler/ConfOnlyShadow -s 1 -e 156 -a
+	$(BLENDER) -b "$^" -o "$(subst 001.png,###.png,$@)" -P blender/protosettler/ConfOnlyShadow -s 1 -e 156 -a
 
 cbin: $(LLLIBS)
 
