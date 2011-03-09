@@ -13,7 +13,7 @@ def postproc_frames () : #filename, box) :
 
 		print "... "+str(i)+"th frame"
 
-		setim = Image.open (searchdir+"/noshd-"+str(i).zfill(4)+".png")
+		setim = Image.open (searchdir+"/noshd-"+str(i).zfill(3)+".png")
 		for x in range(setim.size[0]) :
 			for y in range(setim.size[1]) :
 				pixel = list(setim.getpixel ((x,y)))
@@ -23,7 +23,7 @@ def postproc_frames () : #filename, box) :
 					pixel[3] = 0
 				setim.putpixel ((x,y), tuple(pixel))
 
-		shdim = Image.open (searchdir+"/onlshd-"+str(i).zfill(4)+".png")
+		shdim = Image.open (searchdir+"/onlshd-"+str(i).zfill(3)+".png")
 		for x in range(shdim.size[0]) :
 			for y in range(shdim.size[1]) :
 				pixel = list(shdim.getpixel ((x,y)))
@@ -47,7 +47,7 @@ def find_bounds () :
 
 	global bounds, boundsize
 
-	pivotimg = Image.open (searchdir+"/noshd-0001.png")
+	pivotimg = Image.open (searchdir+"/noshd-001.png")
 	bounds = list(pivotimg.size)+[0,0] # left, top, right, bottom
 
 	for ff in os.listdir(searchdir):
