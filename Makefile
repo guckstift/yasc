@@ -61,4 +61,8 @@ totalclean:
 	-rm -r gfx
 	-rm -r bin
 	-rm -r pybin
+	-rm -r doc
 
+epydoc:
+	mkdir -p doc
+	epydoc --html pysrc -o doc/pysrc --config epydoc.conf --parse-only

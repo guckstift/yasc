@@ -2,22 +2,34 @@
 configure the project
 ---------------------
 
-1. with Ubuntu you need these packages:
+1. With Ubuntu you need these packages:
 
 libsdl1.2-dev
 libsdl-image1.2-dev
 python
 
-2. for rendering textures and game-objects you further need the newest Blender-version
+2. For rendering textures and game-objects you further need the newest Blender-version
 (currently 2.56a [beta]). Download a matching binary-package for your machine
 from http://www.blender.org/ , extract to a directory of your choice, and customize the BLENDER
-variable in the "Makefile" so that it points to the actual program-file of your new blender-version.
+variable in the "Makefile" so that it points to the actual program-file of your new Blender-version.
 
-3. now do "make" in the project root directory, this does: Rendering, Gfx-Postprocessing,
-C-Compiling and Python-compiling.
+3. Now do "make" in the project root directory, this does: Rendering, Gfx-Postprocessing,
+C-Compiling and Python-Compiling.
 
-4. start game with "bash launch.sh"
+4. Start game with "bash launch.sh"
 
-5. "make clean" deletes all auto-generated files (by "make"), except the renderings.
+5. "make clean" deletes some auto-generated files (by "make"), except the Renderings and docs.
 
-6. "make totalclean" deletes all auto-generated files (by "make"), really all!!!
+6. "make totalclean" deletes all auto-generated files, really all!!!
+
+build an epydoc reference
+-------------------------
+
+1. With Ubuntu you need the package:
+
+python-epydoc
+
+2. From the project's root directory do "make epydoc".
+
+3. Now view the reference of the project's python code by opening doc/pysrc/index.html
+in your web browser.
