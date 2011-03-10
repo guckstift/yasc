@@ -1,5 +1,5 @@
 
-BLENDER = /home/broepi/blender-2.56a-beta-linux-glibc27/blender
+include localMakefile
 
 LLMODS = view
 LLLIBS = $(foreach llmod,$(LLMODS),bin/lowlevel/lib$(llmod).so)
