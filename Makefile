@@ -61,7 +61,7 @@ totalclean:
 	-rm -r gfx
 	-rm -r bin
 	-rm -r pybin
-	-rm -r doc
+	-rm -r doc/pysrc
 
 epydoc:
 	mkdir -p doc

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="de">
+  <head>
+    <title>yasc - Design-Dokumentation</title>
+    <style type="text/css">
+    	img {
+    		vertical-align:middle;
+    	}
+    </style>
+  </head>
+  <body>
+  
+    <h1>yasc - Design-Dokumentation</h1>
+    
+    <h2>Bibliotheken, Frameworks und Software</h2>
+
+    <ul>
+    	<li>Blender: Modellierung von Spielobjekten und Texturen</li>
+		<li>SDL: Event-Handling, Eingabe und Bereitstellung des Wirtsfenster</li>
+		<li>OpenGL: Grafik</li>
+    </ul>
+    
+    <h2>Die yasc-Welt</h2>
+    
+    <h3>Das Kartengitter</h3>
+    <p>Die Karte ist aufgebaut aus rechtwinkligen nach unten zeigendenden (DPT) und nach oben
+    zeigendenden (UPT) Dreiecken.</p>
+    
+    <p><img src="triangles.png" alt="" /></p>
+    
+    <p>Die Höhe eines Dreiecks ist <i>h<sub>T</sub> = 14 px</i> und die Breite ist
+    <i>w<sub>T</sub>= 28 px</i>. Eine Zeile im Kartengitter setzt sich aus sich abwechselndend DPTs
+    und UPTs zusammen und enthält eine gerade Anzahl an Dreiecken.</p>
+    
+    <p><img src="triangle-line.png" alt="" /></p>
+    
+    <p>Die Zeilen fangen abwechselnd einmal mit einem DPT an und einmal mit einem UPT an. Die
+    Gesamtzahl der Kartenzeilen ist geradzahlig und die Kartenbreite <i>w<sub>M</sub></i> (Anzahl
+    der Dreiecke in einer Zeile) ist gleich der Kartenhöhe <i>h<sub>M</sub></i> (Anzahl der Zeilen
+    in der Karte). Damit ist jede Karte im gewissen Sinne quadratisch und wir können die Größe
+    allgemein als <i><b>s<sub>M</sub></b> = w<sub>M</sub> = h<sub>M</sub></i> bezeichnen.</p>
+    
+    <p><img src="triangle-grid.png" alt="" /></p>
+    
+    <p>Die Adressierung wird durch folgende Grafik illustriert. Das blaugefärbte Dreieck hat die
+    Adresse (2,4). Liegt also in Spalte 2, Zeile 4.</p>
+
+    <p><img src="triangle-grid2.png" alt="" /></p>
+    
+    <p>In der nächsten Grafik sind die Vertices des Dreiecksnetzes markiert. Es ergeben sich
+    <i>s<sub>M</sub>+1</i> Vertex-Zeilen bei einer Karte der Größe <i>s<sub>M</sub></i>. In jeder
+    Zeile sind <img src="formula1.png" alt="" /> Vertices. Die Adressierung der Vertices sollte
+    durch die Grafik ersichtlich werden. Der Vertex mit der Adresse (2,3) zB. liegt in der Zeile 3 und
+    in der roten Spalte 2, da jede Vertex-Zeile mit ungeradem Zeilen-Index eine halbe Dreiecksbreite
+    nach rechts verschoben ist.</p>
+    
+    <p><img src="triangle-grid3.png" alt="" /></p>
+    
+    <h3>Betrachtungswinkel</h3>
+    
+    <p>Der Betrachtungswinkel, aus dem der Spieler die virtuelle Spielwelt beobachtet, lässt sich
+    aus einigen einfachen mathematischen Zusammenhängen ermitteln. Wir gehen davon aus, dass die
+    Spielkarte bei einer Draufsicht (orthogonale Projektion, senkrecht von oben) aus gleichseitigen
+    Dreiecken bestehen würde. Die tatsächlich dargestellten Dreiecke sind aber rechtwinklige
+    Dreiecke deren Katheten im Bildschirmkoordinatensystem im 45°-Winkel liegen. Das gleichseitige
+    Dreieck ist somit auf ein rechtwinkliges Dreieck vertikal gestaucht.</p>
+    
+    <p>Die Seitenlänge eines gleichseitigen Dreiecks sei <i>a</i>. Die Höhe des Dreiecks ist damit
+    gleich <img src="formula2.png" alt="" />. Sei <i>h'</i> nun die Höhe des dargestellten
+    Dreiecks auf dem Bildschirm und sei &alpha; der Winkel zwischen der Landschaftsfläche und dem
+    Projektionsvektor.</p>
+    
+    <p><img src="angle.png" alt="" /></p>
+    
+    <p>Die reelle Dreieckshöhe <i>h</i> und die projezierte Höhe <i>h'</i> ergeben zusammen mit dem
+    Projektionsvektor ein rechtwinkliges Dreieck.</p>
+    
+    <p><img src="angle2.png" alt="" /></p>
+    
+    <p>Im rechtwinkligen Dreieck beschreibt der Sinus von &alpha; das Verhältnis seiner Gegenkathete
+    (<i>h'</i>) zur Hypotenuse (<i>h</i>), also <img src="formula3.png" alt="" />. Daraus ergibt
+    sich <img src="formula4.png" alt="" />. Mit <i>a = w<sub>T</sub> = 28 px</i> und
+    <i>h' = h<sub>T</sub> = 14 px</i> ist der Betrachtungswinkel letztendlich
+    <img src="formula5.png" alt="" />.</p>
+    
+    <p>Als nächstes wollen wir rausfinden, wie sich Höhen unter diesem Betrachtungswinkel verändern.
+    Dazu denken wir uns einen Stab der Länge 1, der im Boden steckt und orthogonal zur Bodenebene
+    steht. Folgende Skizze zeigt diese Szene mit dem Projektionsvektor und der projezierten Länge x
+    des Stabes.</p>
+    
+    <p><img src="angle3.png" alt="" /></p>
+    
+    <p>Offensichtlich gilt in dieser Konstellation, dass <i>x</i> = sin (90° - <i>&alpha;</i>) ist.
+    Mit folgender Herleitung kommen wir auf den genauen Wert für <i>x</i>.</p>
+    
+    <p><img src="formula6.png" alt="" /></p>
+    
+    <p>Dieser Wert dient nun als Faktor zur Umrechnung eines reellen Höhenunterschiedes in einen
+    projezierten Höhenunterschied.</p>
+    
+    <h3>Höhenkarte</h3>
+    
+    <p>Jedem Vertex der Karte ist ein ganzzahliger Höhenwert zugeordnet. Ein Höhenwert von
+    1 entspricht einer Anhebung des Vertex um eine drittel Dreiecksbreite
+    <img src="formula7.png" alt="" />. Mithilfe des Umrechnungsfaktors ergibt sich eine projezierte
+    Höhenänderung von <img src="formula8.png" alt="" />. Diese wird zur korrekten Darstellung von
+    der y-Koordinate des projezierten Vertex abgezogen. Zwei benachbarte Vertices unterscheiden sich
+    immer höchstens um eine Höhendifferez von 1, also um eine drittel Dreiecksbreite auf der reellen
+    Karte. Der Karteneditor muss diese Einschränkung beachten, sonst gilt die Karte als
+    invalide.</p>
+    
+    <p><img src="triangle-grid4.png" alt="" /></p>
+    
+  </body>
+</html>
