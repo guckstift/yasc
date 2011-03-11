@@ -5,6 +5,11 @@
 def path_heuristic(sx, sy, ex, ey):
 	"""
 	Calculates the distance of the shortest path between start- (sx,sy) and endpoint (ex,ey).
+	@param sx the x-coordinate of the startpoint
+	@param sy the y-coordinate of the startpoint
+	@param ex the x-coordinate of the endpoint
+	@param ey the y-coordinate of the endpoint
+	@return the minimal distance between the start- and endpoint
 	"""
 	
 	dx = abs(sx - ex)	# delta x - the distance in x-direction
@@ -12,12 +17,6 @@ def path_heuristic(sx, sy, ex, ey):
 	
 	man_dist = dx + dy	# the manhattan-distance between start- and endpoint
 	
-	""" obsolete:
-	if (sx < ex and sy < ey ) or (sx > ex and sy > ey):
-		diagonal = False	# there is one (or more) diagonal like this: \
-	if (sx > ex and sy < ey ) or (sx < ex and sy > ey):
-		diagonal = True	# there is one (or more) diagonal like this: /
-	"""
 	if sx == ex or sy == ey:
 		return man_dist		# there are no diagonals at the shortes path
 	
