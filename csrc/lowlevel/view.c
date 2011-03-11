@@ -4,13 +4,14 @@
 
 typedef unsigned int uint;
 
-void GFXEngineSDLOGL_DrawTerrain (uint *mymap, uint mapsize, uint TRIA_W, uint TRIA_H,
+void GFXEngineSDLOGL_DrawTerrain (uint **terra, uint mapsize, uint TRIA_W, uint TRIA_H,
 	uint TEX_FACTOR, uint *textures);
-void GFXEngineSDLOGL_DrawTriangle (uint tx, uint ty, uint upt,
+
+void DrawTriangle (uint tx, uint ty, uint upt,
 	uint TRIA_W, uint TRIA_H, uint TEX_FACTOR, uint TEXTURE);
 
 
-void GFXEngineSDLOGL_DrawTerrain (uint *mymap, uint mapsize, uint TRIA_W, uint TRIA_H,
+void GFXEngineSDLOGL_DrawTerrain (uint **terra, uint mapsize, uint TRIA_W, uint TRIA_H,
 	uint TEX_FACTOR, uint *textures)
 {
 	uint x,y;
@@ -19,14 +20,15 @@ void GFXEngineSDLOGL_DrawTerrain (uint *mymap, uint mapsize, uint TRIA_W, uint T
 	/* Draw Triangles */
 	for (y=0; y<mapsize; y++) {
 		for (x=0; x<mapsize; x++) {
-			GFXEngineSDLOGL_DrawTriangle (x, y, (x+y)%2 == 1, TRIA_W, TRIA_H,
-				TEX_FACTOR, textures[mymap[y*mapsize+x]]);
+			DrawTriangle (x, y, (x+y)%2 == 1, TRIA_W, TRIA_H,
+				TEX_FACTOR, textures[terra[y][x]] );
 		}
 	}
 	/* Draw Borders */
+	/* to be implemented */
 }
 
-void GFXEngineSDLOGL_DrawTriangle (uint tx, uint ty, uint upt,
+void DrawTriangle (uint tx, uint ty, uint upt,
 	uint TRIA_W, uint TRIA_H, uint TEX_FACTOR, uint TEXTURE)
 {
 	float u;

@@ -6,8 +6,9 @@ import surface
 from surface import *
 
 class SurfaceSDLOGL (surface.Surface) :
+
 	"""
-	Holds both: an sdl-surface and an opengl-2d-texture with the same content
+	Holds a 2D-graphic as an OpenGl-Texture. Loading from file uses an SDL-function.
 	"""
 
 	def __init__ (self) :
@@ -15,6 +16,11 @@ class SurfaceSDLOGL (surface.Surface) :
 		Surface.__init__ (self)
 	
 	def LoadFromFile (self, filename, bits16=False) :
+	
+		"""
+		Load image from png file. Currently png files must be 24bit-images.
+		@param bits16: True if texture should be 16bit in memory (R5G6B5)
+		"""
 	
 		surface = IMG_Load (filename)
 		self.w = surface.w
@@ -44,8 +50,6 @@ class SurfaceSDLOGL (surface.Surface) :
 		if bits16 :
 			glTexImage2D (GL_TEXTURE_2D, 0, GL_RGB5,
 				self.w, self.h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, pixdat16)
-			#glTexImage2D (GL_TEXTURE_2D, 0, 3,
-			#	2, 2, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, [0,0,0,0])
 		else:
 			glTexImage2D (GL_TEXTURE_2D, 0, 3,
 				self.w, self.h, 0, GL_RGB, GL_UNSIGNED_BYTE, surface.pixels.to_array())

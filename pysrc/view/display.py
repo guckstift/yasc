@@ -1,6 +1,10 @@
-#!/usr/bin/env python
 
 class Display :
+
+	"""
+	A generic Display to output the game scene.
+	It's useless without any subclass.
+	"""
 
 	def __init__ (self):
 	

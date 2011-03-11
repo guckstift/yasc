@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 TRIA_W = 28
 TRIA_H = 14
@@ -9,6 +8,11 @@ TEX_FACTOR = 8
 
 class GFXEngine :
 
+	"""
+	The generic GFX-Engine of yasc. Should be subclassed to implement technology-dependent
+	Drawing-methods.
+	"""
+
 	def __init__ (self, display=None, view=None, mymap=None) :
 	
 		self.SetDisplay (display)
@@ -17,6 +21,11 @@ class GFXEngine :
 		self.LoadTerrainset ()
 	
 	def LoadTerrainset (self) :
+	
+		"""
+		This loads the Terrainset from files and prepares it.
+		automatically called by the constructor.
+		"""
 	
 		self.terrainset = []
 
@@ -30,21 +39,11 @@ class GFXEngine :
 		
 	def DrawTerrain (self) :
 	
-		# Draw Triangles
-		for y in range(self.mymap.mapsize):
-			for x in range(self.mymap.mapsize):
-				self.DrawTriangle (x, y, (x+y)%2 == 1)
-		# Draw Borders
-		
-	def DrawTriangle (self, x, y, upt=False) :
 		"""
-		@param x, y: triangle address
+		Draws triangles and borders, where 2 different terrains border on each other.
+		[override me]
 		"""
-		
-		pass
-		
-	def DrawBorder (self) :
-
+	
 		pass
 		
 	def SetDisplay (self, display) :

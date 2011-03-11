@@ -1,5 +1,5 @@
 
-import ctypes
+import ctypes as ct
 from sdl import *
 
 import gfxengine
@@ -7,6 +7,7 @@ from gfxengine import *
 from surfacesdlogl import *
 
 class GFXEngineSDLOGL (gfxengine.GFXEngine) :
+
 	"""
 	The SDL+OpenGL-based GFX-Engine of yasc
 	"""
@@ -17,90 +18,55 @@ class GFXEngineSDLOGL (gfxengine.GFXEngine) :
 		self.ll = ll
 	
 	def LoadTerrainset (self) :
-		"""
-		This loads all terrain-graphics and creates darker and lighter versions of each
-		"""
 	
-		self.terrainset = []
+		self.terrainset = Terrainset ()
 		
+		"""
 		for terrafilename in TERRAIN_TEXTURE_FILES :
 			newsurf = SurfaceSDLOGL ()
 			newsurf.LoadFromFile (TERRAIN_PNG_DIR +"/"+ terrafilename, True)
 			self.terrainset.append (newsurf)
-	
+		"""
 		
 	def DrawTerrain (self) :
 	
-		self.ll.view.GFXEngineSDLOGL_DrawTerrain (self.mymap.terrAsCarray (),
+		self.ll.view.GFXEngineSDLOGL_DrawTerrain (self.mymap.terra.asCArray (),
 			self.mymap.mapsize, TRIA_W, TRIA_H,
-			TEX_FACTOR, self.terrainsetTexturesAsCarray ())
+			TEX_FACTOR, self.terrainset.asCArray() )
 		
 		"""
 		#
 		# This code was reimplemented in the C-function GFXEngineSDLOGL_DrawTerrain () in view.c
 		# performance-improvement 14ms -> 3ms
 		#
-		# original code in superclass
-		#
 		"""
-	
-	def DrawTriangle (self, x, y, upt=False) :
-	
-		
-		self.ll.view.GFXEngineSDLOGL_DrawTriangle (x, y, int(upt), TRIA_W, TRIA_H, TEX_FACTOR,
-			 self.terrainset[0].texture)
-		
-		"""
-		#
-		# This code was reimplemented in the C-function GFXEngineSDLOGL_DrawTriangle () in view.c
-		# performance-improvement 50ms -> 14ms
-		#
-		# original code:
-		
-		tx = x
-		ty = y
-		x = tx*TRIA_W/2
-		y = ty*TRIA_H
 
-		u = (tx/(TEX_FACTOR*2.0)) + 0.5 * int( (ty%(TEX_FACTOR*2)) >= TEX_FACTOR )
-		v = (ty/float(TEX_FACTOR))
+class Terrainset :
 
-		glBindTexture (GL_TEXTURE_2D, self.terrainset[0].texture)
-		glBegin (GL_TRIANGLES)
-		if not upt:
-			glTexCoord2f (u, v)
-			glVertex3i (x, y, 0)
-		
-			glTexCoord2f (u+(1.0/TEX_FACTOR), v)
-			glVertex3i (x+TRIA_W, y, 0)
-		
-			glTexCoord2f (u+(1.0/(TEX_FACTOR*2)), v+(1.0/TEX_FACTOR))
-			glVertex3i (x+TRIA_W/2, y+TRIA_H, 0)
-		
-		else :
-			glTexCoord2f (u+(1.0/(TEX_FACTOR*2)), v)
-			glVertex3i (x+TRIA_W/2, y, 0)
-		
-			glTexCoord2f (u+(1.0/TEX_FACTOR), v+(1.0/TEX_FACTOR))
-			glVertex3i (x+TRIA_W, y+TRIA_H, 0)
-			
-			glTexCoord2f (u, v+(1.0/TEX_FACTOR))
-			glVertex3i (x, y+TRIA_H, 0)
-		
-		glEnd ()
-		"""
+	"""
+	This class holds all terrain-graphics and darker and lighter versions of each
+	"""
+
+	def __init__ (self):
 	
-	def terrainsetTexturesAsCarray (self) :
-		"""
-		Returns the opengl-texture-names of the terrain-textures
-		as a ctype-uint-array
-		"""
-		
-		intarr = ctypes.c_uint * len(self.terrainset)
-		
-		res = intarr()
-		for i in range(len(self.terrainset)) :
-			res[i] = self.terrainset[i].texture
+		self.tcount = len(TERRAIN_TEXTURE_FILES)
+		self.data = []
+		for terrafilename in TERRAIN_TEXTURE_FILES :
+			newsurf = SurfaceSDLOGL ()
+			newsurf.LoadFromFile (TERRAIN_PNG_DIR +"/"+ terrafilename, True)
+			self.data.append (newsurf)
+		self.carr = None
 
-		return res
+	def asCArray (self):
+
+		if self.carr == None:
+
+			UINT = ct.c_uint
+			UINTARR = UINT * self.tcount
+			self.carr = UINTARR ()
+			for i in range(self.tcount):
+				self.carr[i] = self.data[i].texture
+		
+		return self.carr
+
 

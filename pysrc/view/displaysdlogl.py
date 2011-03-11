@@ -6,6 +6,7 @@ import display
 from display import *
 
 class DisplaySDLOGL (display.Display) :
+
 	"""
 	Represents the SDL+OpenGL based Display
 	"""
@@ -22,11 +23,15 @@ class DisplaySDLOGL (display.Display) :
 		
 		SDL_WM_SetCaption (wincaption, wincaption)
 		
-		SDL_GL_SetAttribute (SDL_GL_RED_SIZE, 8)
-		SDL_GL_SetAttribute (SDL_GL_GREEN_SIZE, 8)
-		SDL_GL_SetAttribute (SDL_GL_BLUE_SIZE, 8)
-		SDL_GL_SetAttribute (SDL_GL_ALPHA_SIZE, 8)
-		SDL_GL_SetAttribute (SDL_GL_BUFFER_SIZE, 32)
+		if self.bitdepth == 32:
+			SDL_GL_SetAttribute (SDL_GL_RED_SIZE, 8)
+			SDL_GL_SetAttribute (SDL_GL_GREEN_SIZE, 8)
+			SDL_GL_SetAttribute (SDL_GL_BLUE_SIZE, 8)
+			SDL_GL_SetAttribute (SDL_GL_ALPHA_SIZE, 8)
+			SDL_GL_SetAttribute (SDL_GL_BUFFER_SIZE, 32)
+		else:
+			raise Exception ("Other bitdepths than 32 bits currently not supportet by DisplaySDLOGL") 
+
 		SDL_GL_SetAttribute (SDL_GL_DOUBLEBUFFER, 1)
 		SDL_GL_SetAttribute (SDL_GL_DEPTH_SIZE, 0)
 		SDL_GL_SetAttribute (SDL_GL_STENCIL_SIZE, 0)
@@ -40,7 +45,7 @@ class DisplaySDLOGL (display.Display) :
 		SDL_GL_SetAttribute (SDL_GL_SWAP_CONTROL, 0)
 		SDL_GL_SetAttribute (SDL_GL_ACCELERATED_VISUAL, 0)
 
-		self.screen = SDL_SetVideoMode (resol[0], resol[1], 32, SDL_HWSURFACE|SDL_DOUBLEBUF|SDL_OPENGL)
+		self.screen = SDL_SetVideoMode (resol[0], resol[1], self.bitdepth, SDL_OPENGL)
 		
 		glEnable (GL_TEXTURE_2D)
 		
