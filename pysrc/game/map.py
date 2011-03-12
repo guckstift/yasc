@@ -14,9 +14,13 @@ class Map :
 		
 		self.mapsize = mapsize # = kartenbreite = kartenhoehe
 		self.terra = Terramap (mapsize)
-		self.hights = Heightmap (mapsize)
+		self.heights = Heightmap (mapsize)
 
 class Terramap :
+
+	"""
+	This class holds an array of terrain-types for each triangle.
+	"""
 
 	def __init__ (self, mapsize):
 	
@@ -49,6 +53,10 @@ class Terramap :
 
 class Heightmap :
 
+	"""
+	This class holds an array of height-values (integer) for each vertex.
+	"""
+
 	def __init__ (self, mapsize):
 	
 		self.mapsize = mapsize
@@ -63,7 +71,6 @@ class Heightmap :
 
 			INT = ct.c_int
 			PINT = ct.POINTER(INT)
-			PPINT = ct.POINTER(PINT)
 			INTARR = INT * self.vhe
 			PINTARR = PINT * self.vwi
 			self.carr = PINTARR ()
@@ -74,10 +81,10 @@ class Heightmap :
 		
 		return self.carr
 	
-	def setHight (self, x, y, hight) :
+	def setHeight (self, x, y, height) :
 	
-		self.data[y][x] = hight
+		self.data[y][x] = height
 		if not self.carr == None:
-			self.carr[y][x] = hight
+			self.carr[y][x] = height
 
 

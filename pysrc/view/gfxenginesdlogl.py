@@ -32,7 +32,7 @@ class GFXEngineSDLOGL (gfxengine.GFXEngine) :
 	
 		self.ll.view.GFXEngineSDLOGL_DrawTerrain (self.mymap.terra.asCArray (),
 			self.mymap.mapsize, TRIA_W, TRIA_H,
-			TEX_FACTOR, self.terrainset.asCArray() )
+			TEX_FACTOR, self.terrainset.asCArray(), self.vertarr.asCArray())
 		
 		"""
 		#
@@ -68,5 +68,4 @@ class Terrainset :
 				self.carr[i] = self.data[i].texture
 		
 		return self.carr
-
 

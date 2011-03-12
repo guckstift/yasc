@@ -9,6 +9,9 @@ ll = LowLevelLib ()
 display = DisplaySDLOGL ()
 view = View ()
 mymap = Map (40)
+mymap.heights.setHeight(2,3,-1)
+mymap.heights.setHeight(2,5,1)
+mymap.heights.setHeight(4,5,-1)
 gfxengine = GFXEngineSDLOGL (ll, display, view, mymap)
 
 frames = 0
