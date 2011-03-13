@@ -16,10 +16,10 @@ class GFXEngine :
 	Drawing-methods.
 	"""
 
-	def __init__ (self, display=None, view=None, mymap=None) :
+	def __init__ (self, display=None, viewp=None, mymap=None) :
 	
 		self.SetDisplay (display)
-		self.SetView (view)
+		self.SetViewpoint (viewp)
 		self.SetMap (mymap)
 		self.LoadTerrainset ()
 	
@@ -53,9 +53,9 @@ class GFXEngine :
 		
 		self.display = display
 		
-	def SetView (self, view) :
+	def SetViewpoint (self, viewp) :
 		
-		self.view = view
+		self.viewp = viewp
 		
 	def SetMap (self, mymap) :
 		

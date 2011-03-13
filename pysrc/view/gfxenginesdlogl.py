@@ -21,13 +21,6 @@ class GFXEngineSDLOGL (gfxengine.GFXEngine) :
 	
 		self.terrainset = Terrainset ()
 		
-		"""
-		for terrafilename in TERRAIN_TEXTURE_FILES :
-			newsurf = SurfaceSDLOGL ()
-			newsurf.LoadFromFile (TERRAIN_PNG_DIR +"/"+ terrafilename, True)
-			self.terrainset.append (newsurf)
-		"""
-		
 	def DrawTerrain (self) :
 	
 		self.ll.view.GFXEngineSDLOGL_DrawTerrain (self.mymap.terra.asCArray (),

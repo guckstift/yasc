@@ -5,4 +5,4 @@ from gfxengine import *
 from gfxenginesdlogl import *
 from surface import *
 from surfacesdlogl import *
-from view import *
+from viewpoint import *

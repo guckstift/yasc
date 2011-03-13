@@ -1,2 +1,4 @@
 
-from map import *
+from lmap import *
+from sprite import *
+
