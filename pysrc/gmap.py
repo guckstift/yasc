@@ -1,5 +1,7 @@
 
-import ctypes as ct
+import ctypes
+
+from vertexarray import *
 
 class Map :
 
@@ -15,6 +17,11 @@ class Map :
 		self.mapsize = mapsize # = kartenbreite = kartenhoehe
 		self.terra = Terramap (mapsize)
 		self.heights = Heightmap (mapsize)
+		self.vertarray = Vertexarray (self)
+	
+	def getVertarray (self):
+	
+		return self.vertarray
 
 class Terramap :
 
@@ -32,9 +39,9 @@ class Terramap :
 
 		if self.carr == None:
 
-			UINT = ct.c_uint
-			PUINT = ct.POINTER(UINT)
-			PPUINT = ct.POINTER(PUINT)
+			UINT = ctypes.c_uint
+			PUINT = ctypes.POINTER(UINT)
+			PPUINT = ctypes.POINTER(PUINT)
 			UINTARR = UINT * self.mapsize
 			PUINTARR = PUINT * self.mapsize
 			self.carr = PUINTARR ()
@@ -59,7 +66,6 @@ class Heightmap :
 
 	def __init__ (self, mapsize):
 	
-		self.mapsize = mapsize
 		self.vwi = 1+(mapsize/2) # vertices per line
 		self.vhe = 1+mapsize # vertex-line-count
 		self.data = [[0 for x in range(self.vwi)] for y in range(self.vhe)] # hights of vertices
@@ -69,8 +75,8 @@ class Heightmap :
 
 		if self.carr == None:
 
-			INT = ct.c_int
-			PINT = ct.POINTER(INT)
+			INT = ctypes.c_int
+			PINT = ctypes.POINTER(INT)
 			INTARR = INT * self.vhe
 			PINTARR = PINT * self.vwi
 			self.carr = PINTARR ()
