@@ -1,4 +1,8 @@
 
+"""
+Script for compiling other python modules
+"""
+
 import sys
 import py_compile
 

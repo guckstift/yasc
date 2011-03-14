@@ -4,7 +4,7 @@ include localMakefile
 # FUNCTIONS
 
 # arg1 = c-source-filename
-CSRC2CLIB = $(patsubst csrc/%.c,bin/%.so,$(dir $(1))lib$(notdir $(1)))
+CSRC2CLIB = $(patsubst csrc/%.c,bin/$(PLATFORM)/%.so,$(dir $(1))lib$(notdir $(1)))
 
 # arg1 = c-source-filename, arg2 = lib-filename
 define CRULE
@@ -14,6 +14,8 @@ $(2): $(1)
 endef
 
 # VARIABLES
+
+PLATFORM := $(shell python -B pfinfo.py)
 
 CMODS := $(wildcard csrc/*.c) $(wildcard csrc/*/*.c)
 CLIBS := $(foreach cmod,$(CMODS),$(call CSRC2CLIB,$(cmod)))

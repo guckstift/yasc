@@ -4,9 +4,8 @@ configure the project
 
 1. With Ubuntu you need these packages:
 
-libsdl1.2-dev
-libsdl-image1.2-dev
 python
+python-pygame
 python-opengl
 
 2. For rendering textures and game-objects you further need the newest Blender-version
