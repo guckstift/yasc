@@ -34,10 +34,3 @@ def path_heuristic(start, end):
 	# max_diagonals is the maximum number of diagonals along the path from start to end
 	
 	return man_dist - min(dx, max_diagonals)
-
-# some tests:
-print path_heuristic ((0,0), (0,3)) == 3 # rechts runter
-print path_heuristic ((3,0), (0,3)) == 4 # links runter
-print path_heuristic ((3,0), (3,0)) == 0 # stehen bleiben
-print path_heuristic ((1,5), (4,1)) == 5 # rechts hoch
-print path_heuristic ((3,5), (0,0)) == 6 # links hoch

@@ -48,11 +48,14 @@ class Pathstorage (object):
 	def search_path(self, pathkey):
 		"""
 		Searches a path in the storage by its key, which is a tuple with the 
-		start- and the endpoint of the path.
+		start- and the endpoint of the path. The function also searches for reversed
+		pathes.
 		@param pathkey a 2-tuple of 2-tuples 
 		@return returns either the path if it is in the storage or an empty list if not
 		"""
 		if pathkey in self.storage.keys():
 			return self.storage[pathkey]
+		if tuple(reversed(pathkey)) in self.storage.keys():
+			return reversed(self.storage[tuple(reversed(pathkey))])
 		else:
 			return []

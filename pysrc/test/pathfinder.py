@@ -13,10 +13,12 @@ class Pathfinder (object):
 		priorityqueueset.py
 		pathstorage.py
 		
-	TODO: 	*blocked nodes not implemented yet
-		*no error if coord is greater than border
+	TODO: 	*no error if coord is greater than border
 		*sometimes not the direct path is chosen, if another one has the 
-		same length	
+		same length
+		*not storing reversed pathes
+		*speed-tweaks by resizing the triangles (x4, x16 ...)
+		*how to recognize not reachable areas?
 	"""
 
 	def __init__(self):
@@ -65,7 +67,7 @@ class Pathfinder (object):
 		an empty list is returned.
 		"""
 		# if the start- and endpoints are stored already, the stored path will be
-		# returned
+		# returned:
 		path = self.pathstorage.search_path((start, end))
 		if path != []:
 			return path
@@ -109,9 +111,9 @@ class Pathfinder (object):
 				
 		return []
 
-	def _successors(self, coord, border=200):
+	def _successors(self, coord, border=6):
 		"""
-		Computes all successors of the given coord
+		Computes all possible successors of the given coord
 		@param coord the coordinate whoms successors will be computed
 		@param border x- and y-coordinate of the right and lower border
 		@return a List with all successing nodes
@@ -119,6 +121,10 @@ class Pathfinder (object):
 		succ_list = []	# list with all possible successors of the given node
 	
 		if (coord[0] > 0 and coord[1] > 0) and (coord[0] < border and coord[1] < border):
+			succ_list.append((coord[0]-1, coord[1]))
+			succ_list.append((coord[0], coord[1]-1))
+			succ_list.append((coord[0], coord[1]+1))
+			succ_list.append((coord[0]+1, coord[1]))
 			if coord[1]%2 == 0:
 				succ_list.append((coord[0]-1, coord[1]-1))
 				succ_list.append((coord[0]-1, coord[1]+1))
@@ -126,11 +132,7 @@ class Pathfinder (object):
 			elif coord[1]%2 == 1:	# odd lineparity
 				succ_list.append((coord[0]+1, coord[1]-1))
 				succ_list.append((coord[0]+1, coord[1]+1))
-	
-			succ_list.append((coord[0]-1, coord[1]))
-			succ_list.append((coord[0], coord[1]-1))
-			succ_list.append((coord[0], coord[1]+1))
-			succ_list.append((coord[0]+1, coord[1]))
+			
 		# behaviour at the borders and corners:
 		elif coord[0] == 0:	# left border
 			if coord[1] == 0:	# upper left corner
@@ -142,51 +144,59 @@ class Pathfinder (object):
 				succ_list.append((coord[0], coord[1]-1))
 				succ_list.append((coord[0]+1, coord[1]))
 			else:	# somewhere between y == 0 and y == border
-				if coord[1]%2 == 1:
-					succ_list.append((coord[0]+1, coord[1]-1))
-					succ_list.append((coord[0]+1, coord[1]+1))
 				succ_list.append((coord[0], coord[1]-1))
 				succ_list.append((coord[0], coord[1]+1))
 				succ_list.append((coord[0]+1, coord[1]))
+				if coord[1]%2 == 1:
+					succ_list.append((coord[0]+1, coord[1]-1))
+					succ_list.append((coord[0]+1, coord[1]+1))
 		elif coord[1] == 0:		# upper border
 			if coord[0] == border:	# upper right corner
 				succ_list.append((coord[0]-1, 0))
 				succ_list.append((coord[0]-1, 1))
 				succ_list.append((coord[0], 1))
 			else:	# somewhere between x == 0 and x == border
-				succ_list.append((coord[0]-1, coord[1]+1))
 				succ_list.append((coord[0]-1, coord[1]))
 				succ_list.append((coord[0], coord[1]+1))
 				succ_list.append((coord[0]+1, coord[1]))
+				succ_list.append((coord[0]-1, coord[1]+1))
 		elif coord[0] == border:	# right border
 			if coord[1] == border:	# lower right corner
-				if coord[1]%2 == 0:
-					succ_list.append((coord[0]-1, coord[1]-1))
 				succ_list.append((coord[0]-1, coord[1]))
 				succ_list.append((coord[0], coord[1]-1))
-			else :	# somewhere between y == 0 and == border
 				if coord[1]%2 == 0:
 					succ_list.append((coord[0]-1, coord[1]-1))
-					succ_list.append((coord[0]-1, coord[1]+1))
+			else :	# somewhere between y == 0 and == border
 				succ_list.append((coord[0]-1, coord[1]))
 				succ_list.append((coord[0], coord[1]-1))
 				succ_list.append((coord[0], coord[1]+1))
+				if coord[1]%2 == 0:
+					succ_list.append((coord[0]-1, coord[1]-1))
+					succ_list.append((coord[0]-1, coord[1]+1))
 		elif coord[1] == border:	# lower border
 			# somewhere between x == 0 and x == border
+			succ_list.append((coord[0]-1, coord[1]))
+			succ_list.append((coord[0], coord[1]-1))
+			succ_list.append((coord[0]+1, coord[1]))
 			if coord[1]%2 == 0:
 				succ_list.append((coord[0]-1, coord[1]-1))
 			if coord[1]%2 == 1:
 				succ_list.append((coord[0]+1, coord[1]-1))
-			succ_list.append((coord[0]-1, coord[1]))
-			succ_list.append((coord[0], coord[1]-1))
-			succ_list.append((coord[0]+1, coord[1]))
-		
+			
+		# deleting blocked nodes from the successorlist:
+		temp_list = []	# cause removing items from lists over which you iterate is an bad idea
+		for entry in succ_list:
+			if self.obstacle_map[entry[0]][entry[1]] == True:
+				temp_list.append(entry)
+		for entry in temp_list:
+			succ_list.remove(entry)
 		return succ_list
 
 	def _reconstruct_path(self, node):
 		""" 
 		Reconstructs the path to the given node from the start node
-		(for which .pred is None)
+		(for which .pred is None) by using the predecessor reference 
+		and finally reversing the order of the elements
 		@param node the endnode at the path
 		@return an iterator representing the path
 		"""
@@ -201,6 +211,13 @@ class Pathfinder (object):
 		"""
 		For simple testing at the console, for productive use take compute_path()
 		"""
+		self.obstacle_map = [[False, True, True, True, True, False, False], 
+				[False, True, False, False, False, False, False], 
+				[False, False, False, False, False, False ,False], 
+				[True, True, True, True, True, True, True], 
+				[False, False, False, False, False, False ,False], 
+				[False, False, False, False, False, False ,False], 
+				[False, False, False, False, False, False ,False]]
 		path = self.compute_path(start, end)
 		for node in path:
 			print node
