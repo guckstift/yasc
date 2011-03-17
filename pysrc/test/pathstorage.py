@@ -19,26 +19,25 @@ class Pathstorage (object):
 		
 		if replace == True:
 			self.storage[(path[0], path[self.length1])] = path
+			
 		else:	# otherwise the storage must be checked if there is the same key
 			newkey = (path[0], path[self.length1])
-			if newkey in self.storage.keys():
-				pass	# if the newkey is already in the storage
-			else:
-				self.storage[newkey] = path
+			
+			if newkey not in self.storage.keys():
+				self.storage[newkey] = path	# if the newkey is not in the storage
 				
-	def delete(self, path=None, pathkey=None):
+	def delete(self, pathkey=None, path=None):
 		"""
 		Removes a single path from the storage. If nothing is passed to this method,
 		nothing will be deleted.
-		@param path a hole path to be deleted
 		@param pathkey the start- and endpoint of the path (must be a 2-tuple of 
-			2-tuples) to be deleted
+		2-tuples) to be deleted
+		@param path the hole path to be deleted
 		"""
-		if path == None and pathkey == None:
-			pass
-		elif pathkey != None:
+		if pathkey != None:	# use key for identifying the path
 			del self.storage[pathkey]
-		else:
+			
+		elif path != None:	# use path for deletion
 			self.length2 = len(path) - 1
 			for key in self.storage:
 				if key == (path[0], path[self.length2]):
@@ -55,7 +54,9 @@ class Pathstorage (object):
 		"""
 		if pathkey in self.storage.keys():
 			return self.storage[pathkey]
+			
 		if tuple(reversed(pathkey)) in self.storage.keys():
 			return reversed(self.storage[tuple(reversed(pathkey))])
+			
 		else:
 			return []

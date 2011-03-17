@@ -18,7 +18,7 @@ class Pathfinder (object):
 		same length
 		*not storing reversed pathes
 		*speed-tweaks by resizing the triangles (x4, x16 ...)
-		*how to recognize not reachable areas?
+		*how to recognize unreachable areas?
 	"""
 
 	def __init__(self):
@@ -79,6 +79,7 @@ class Pathfinder (object):
 		ey = end[1]
 		closed_set = {}	# the set with the nodes along the path
 		open_set = PriorityQueueSet()	# nodes which are possible for the path
+		
 		start_node = self.Node((sx, sy), 0, None)
 		start_node.hcost = path_heuristic((sx, sy), (ex, ey))
 		open_set.add(start_node)
@@ -94,7 +95,7 @@ class Pathfinder (object):
 					nodelist.append(entry)
 					
 				self.pathstorage.add(nodelist)
-				return nodelist
+				return nodelist	# a path was found
 		
 			closed_set[curr_node] = curr_node
 		
@@ -103,28 +104,31 @@ class Pathfinder (object):
 				succ_node.gcost = curr_node.gcost + 1	# the cost from one node to another is always 1
 				succ_node.hcost = path_heuristic(succ_node.coord, (ex, ey))
 			
-				if succ_node in closed_set:
-					continue
-				
-				if open_set.add(succ_node):
+				if succ_node not in closed_set and open_set.add(succ_node):
 					succ_node.pred = curr_node
+				# if the node is in closed_set nothing is to do
 				
-		return []
+		return []	# no path from start- to end-point possible
 
-	def _successors(self, coord, border=6):
+	def _successors(self, coord, size=6):
 		"""
 		Computes all possible successors of the given coord
 		@param coord the coordinate whoms successors will be computed
-		@param border x- and y-coordinate of the right and lower border
+		@param size the size of the map in triangles
 		@return a List with all successing nodes
 		"""
 		succ_list = []	# list with all possible successors of the given node
+		
+		n_x = size/2 + 1	# number of nodes horizontal
+		n_y = size + 1		# number of nodes vertical
 	
-		if (coord[0] > 0 and coord[1] > 0) and (coord[0] < border and coord[1] < border):
+		if (coord[0] > 0 and coord[1] > 0) and (coord[0] < n_x and coord[1] < n_y):
+		
 			succ_list.append((coord[0]-1, coord[1]))
 			succ_list.append((coord[0], coord[1]-1))
 			succ_list.append((coord[0], coord[1]+1))
 			succ_list.append((coord[0]+1, coord[1]))
+			
 			if coord[1]%2 == 0:
 				succ_list.append((coord[0]-1, coord[1]-1))
 				succ_list.append((coord[0]-1, coord[1]+1))
@@ -135,61 +139,81 @@ class Pathfinder (object):
 			
 		# behaviour at the borders and corners:
 		elif coord[0] == 0:	# left border
+		
 			if coord[1] == 0:	# upper left corner
 				succ_list.append((0,1))
 				succ_list.append((1,0))
-			elif coord[1] == border:	# lower left corner
+				
+			elif coord[1] == n_y:	# lower left corner
+			
 				if coord[1]%2 == 1:
 					succ_list.append((coord[0]+1, coord[1]-1))
+					
 				succ_list.append((coord[0], coord[1]-1))
 				succ_list.append((coord[0]+1, coord[1]))
-			else:	# somewhere between y == 0 and y == border
+				
+			else:	# somewhere between y == 0 and y == n_y
 				succ_list.append((coord[0], coord[1]-1))
 				succ_list.append((coord[0], coord[1]+1))
 				succ_list.append((coord[0]+1, coord[1]))
+				
 				if coord[1]%2 == 1:
 					succ_list.append((coord[0]+1, coord[1]-1))
 					succ_list.append((coord[0]+1, coord[1]+1))
+					
 		elif coord[1] == 0:		# upper border
-			if coord[0] == border:	# upper right corner
+		
+			if coord[0] == n_x:	# upper right corner
 				succ_list.append((coord[0]-1, 0))
 				succ_list.append((coord[0]-1, 1))
 				succ_list.append((coord[0], 1))
-			else:	# somewhere between x == 0 and x == border
+				
+			else:	# somewhere between x == 0 and x == n_x
 				succ_list.append((coord[0]-1, coord[1]))
 				succ_list.append((coord[0], coord[1]+1))
 				succ_list.append((coord[0]+1, coord[1]))
 				succ_list.append((coord[0]-1, coord[1]+1))
-		elif coord[0] == border:	# right border
-			if coord[1] == border:	# lower right corner
+				
+		elif coord[0] == n_x:	# right border
+		
+			if coord[1] == n_y:	# lower right corner
 				succ_list.append((coord[0]-1, coord[1]))
 				succ_list.append((coord[0], coord[1]-1))
+				
 				if coord[1]%2 == 0:
 					succ_list.append((coord[0]-1, coord[1]-1))
-			else :	# somewhere between y == 0 and == border
+					
+			else :	# somewhere between y == 0 and == n_y
 				succ_list.append((coord[0]-1, coord[1]))
 				succ_list.append((coord[0], coord[1]-1))
 				succ_list.append((coord[0], coord[1]+1))
+				
 				if coord[1]%2 == 0:
 					succ_list.append((coord[0]-1, coord[1]-1))
 					succ_list.append((coord[0]-1, coord[1]+1))
-		elif coord[1] == border:	# lower border
-			# somewhere between x == 0 and x == border
+					
+		elif coord[1] == n_y:	# lower border
+		
+			# somewhere between x == 0 and x == n_x
 			succ_list.append((coord[0]-1, coord[1]))
 			succ_list.append((coord[0], coord[1]-1))
 			succ_list.append((coord[0]+1, coord[1]))
+			
 			if coord[1]%2 == 0:
 				succ_list.append((coord[0]-1, coord[1]-1))
+				
 			if coord[1]%2 == 1:
 				succ_list.append((coord[0]+1, coord[1]-1))
 			
 		# deleting blocked nodes from the successorlist:
 		temp_list = []	# cause removing items from lists over which you iterate is an bad idea
-		for entry in succ_list:
+		for entry in succ_list:	# fill temp_list with blocked nodes
 			if self.obstacle_map[entry[0]][entry[1]] == True:
 				temp_list.append(entry)
-		for entry in temp_list:
+				
+		for entry in temp_list:	# remove all nodes in temp_list from succ_list
 			succ_list.remove(entry)
+			
 		return succ_list
 
 	def _reconstruct_path(self, node):
@@ -202,9 +226,11 @@ class Pathfinder (object):
 		"""
 		path = [node.coord]
 		n = node
+		
 		while n.pred:
 			n = n.pred
 			path.append(n.coord)
+			
 		return reversed(path)
 	
 	def a_star(self, start, end):
