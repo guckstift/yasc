@@ -41,7 +41,7 @@ class PriorityQueueSet(object):
 		""" 
 		Create a new PriorityQueueSet
 		"""
-		self.set = {}
+		self.data = {}
 		self.heap = []    
 
 	def __len__(self):
@@ -51,7 +51,7 @@ class PriorityQueueSet(object):
 		""" 
 		Check if *item* exists in the queue
 		"""
-		return item in self.set
+		return item in self.data
     
 	def pop_smallest(self):
 		""" 
@@ -59,7 +59,7 @@ class PriorityQueueSet(object):
 		IndexError will be thrown if the queue is empty.
 		"""
 		smallest = heapq.heappop(self.heap)
-		del self.set[smallest]
+		del self.data[smallest]
 		return smallest
     
 	def add(self, item):
@@ -73,11 +73,12 @@ class PriorityQueueSet(object):
 		
 		Returns True iff the item was added or updated.
 		"""
-		if not item in self.set:
-			self.set[item] = item
+		if not item in self.data:
+			self.data[item] = item
 			heapq.heappush(self.heap, item)
 			return True
-		elif item < self.set[item]:
+			
+		elif item < self.data[item]:
 		# No choice but to search linearly in the heap
 		#
 			for idx, old_item in enumerate(self.heap):
@@ -85,7 +86,7 @@ class PriorityQueueSet(object):
 					del self.heap[idx]
 					self.heap.append(item)
 					heapq.heapify(self.heap)
-					self.set[item] = item
+					self.data[item] = item
 					return True
         
 		return False

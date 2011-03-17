@@ -110,17 +110,16 @@ class Pathfinder (object):
 				
 		return []	# no path from start- to end-point possible
 
-	def _successors(self, coord, size=6):
+	def _successors(self, coord):
 		"""
 		Computes all possible successors of the given coord
 		@param coord the coordinate whoms successors will be computed
-		@param size the size of the map in triangles
 		@return a List with all successing nodes
 		"""
 		succ_list = []	# list with all possible successors of the given node
 		
-		n_x = size/2 + 1	# number of nodes horizontal
-		n_y = size + 1		# number of nodes vertical
+		n_x = self.mapsize/2 + 1	# number of nodes horizontal
+		n_y = self.mapsize + 1		# number of nodes vertical
 	
 		if (coord[0] > 0 and coord[1] > 0) and (coord[0] < n_x and coord[1] < n_y):
 		
@@ -207,8 +206,9 @@ class Pathfinder (object):
 			
 		# deleting blocked nodes from the successorlist:
 		temp_list = []	# cause removing items from lists over which you iterate is an bad idea
+		
 		for entry in succ_list:	# fill temp_list with blocked nodes
-			if self.obstacle_map[entry[0]][entry[1]] == True:
+			if self.obstacle_map[entry[0]-1][entry[1]-1] == True:
 				temp_list.append(entry)
 				
 		for entry in temp_list:	# remove all nodes in temp_list from succ_list
@@ -233,18 +233,30 @@ class Pathfinder (object):
 			
 		return reversed(path)
 	
-	def a_star(self, start, end):
+	def a_star(self, start, end, obstacle_map):
 		"""
-		For simple testing at the console, for productive use take compute_path()
+		The entrymethod for pathfinding.
+		@param start the startnode
+		@param end the endnode
+		@param obstacle_map the array with a boolean for every node if it is blocked
 		"""
-		self.obstacle_map = [[False, True, True, True, True, False, False], 
+		if obstacle_map == None:
+			self.obstacle_map = [[False, True, True, True, True, False, False], 
 				[False, True, False, False, False, False, False], 
 				[False, False, False, False, False, False ,False], 
-				[True, True, True, True, True, True, True], 
-				[False, False, False, False, False, False ,False], 
-				[False, False, False, False, False, False ,False], 
-				[False, False, False, False, False, False ,False]]
+				[True, True, True, True, True, True, True]]
+		else:
+			self.obstacle_map = obstacle_map
+		
+		self.mapsize = len(self.obstacle_map[0]) - 1	# the size of the map in triangles
+		
+		if self.mapsize != (len(self.obstacle_map) - 1) * 2:
+			print "Bad obstacle_map!"
+			return []
+		
 		path = self.compute_path(start, end)
 		for node in path:
 			print node
+			
+		return path
 
