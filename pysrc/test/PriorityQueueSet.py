@@ -4,7 +4,7 @@
 import heapq
 
 
-class PriorityQueueSet(object):
+class PriorityQueueSet:
 	""" 
 	Combined priority queue and set data structure. Acts like
 	a priority queue, except that its items are guaranteed to
@@ -47,13 +47,13 @@ class PriorityQueueSet(object):
 	def __len__(self):
 		return len(self.heap)
 
-	def has_item(self, item):
+	def hasItem(self, item):
 		""" 
 		Check if *item* exists in the queue
 		"""
 		return item in self.data
     
-	def pop_smallest(self):
+	def popSmallest(self):
 		""" 
 		Remove and return the smallest item from the queue.
 		IndexError will be thrown if the queue is empty.

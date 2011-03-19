@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
-class Pathstorage (object):
+class Pathstorage:
 
 	def __init__(self):
 		self.storage ={}	# the storage itself
@@ -44,7 +44,7 @@ class Pathstorage (object):
 					del self.storage[key]
 					break
 	
-	def search_path(self, pathkey):
+	def searchPath(self, pathkey):
 		"""
 		Searches a path in the storage by its key, which is a tuple with the 
 		start- and the endpoint of the path. The function also searches for reversed
