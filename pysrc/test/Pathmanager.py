@@ -3,6 +3,8 @@
 
 from Pathstorage import *
 from Pathfinder import *
+from Fifo import *
+import threading
 import time
 
 class Pathmanager:
@@ -14,6 +16,17 @@ class Pathmanager:
 	def __init__(self):
 		self.pathstorage = Pathstorage()
 		self.obstacle_map = [[]]
+		self.fifo = Fifo()
+		
+	def addJob(self, ID, start, end):
+		"""
+		@param ID
+		@param start the startnode
+		@param end the endnode
+		"""
+		th = threading.Thread(target = self.findPath, name=ID, args=(ID,start,end))
+		th.start()
+		
 
 	def findPath(self, ID, start, end):
 		"""
@@ -37,23 +50,26 @@ class Pathmanager:
 				for node in macro_path:
 					if i%2 == 0 and i+2 < last_index:
 						temp_path = pf.aStar(node, macro_path[i+2], None)
-						
-						print temp_path
+						self.fifo.add(ID, temp_path)
+						#print temp_path
 						for item in temp_path:
 							path.append(item)
 						time.sleep(2)
 						
 					elif i%2 == 0:	# now its really hot ;)
 						temp_path = pf.aStar(node, end, None)
-						
-						print temp_path
+						self.fifo.add(ID, temp_path)
+						#print temp_path
 						for item in temp_path:
 							path.append(item)
 						break
 						
 					i = i + 1
-		
-		return path
+			else:
+				self.fifo.add(ID, path)
+		else:
+			self.fifo.add(ID, None)
+		#print path
 	
 	def updateObstaclemap(self):
 		"""

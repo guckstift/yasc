@@ -247,6 +247,12 @@ class Pathfinder:
 	
 	def _macroSuccessors(self, coord, step_size, n_x, n_y):
 		"""
+		Computes all possible successors of coord with the given stepsize. This is
+		only for steps greater than 1.
+		@param coord the coordinate for witch the successors will be computed
+		@param step_size the stepsize
+		@param n_x the maximal x-coordinate
+		@param n_y the maximal y-coordinate
 		"""
 		macro_succ_list = []
 		
@@ -266,8 +272,8 @@ class Pathfinder:
 				macro_succ_list.append((coord[0] + half_ss, coord[1] + step_size))
 	
 			elif step_size < coord[1] <= n_y: 	# lower left corner
-				macro_succ_list.append((coord[0], coord[1]))
-				macro_succ_list.append((coord[0], coord[1]))
+				macro_succ_list.append((coord[0] + half_ss, coord[1] - step_size))
+				macro_succ_list.append((coord[0] + step_size, coord[1]))
 	
 			else:
 				macro_succ_list.append((coord[0] + half_ss, coord[1] - step_size))
