@@ -4,9 +4,11 @@
 class Fifo:
 	"""
 	A typical FIFO buffer.
+	@param pathmanager the instance of the pathmanager initialising this fifo
 	"""
 
-	def __init__(self):
+	def __init__(self, pathmanager):
+		self.pathmanager = pathmanager 	# the instance of the pathmanager
 		self.fifo = []
 		
 	def add(self, ID, path):
@@ -26,10 +28,19 @@ class Fifo:
 		if self.fifo != []:
 			return self.fifo.pop(0)
 		return None
+
+	def isEmpty(self):
+		"""
+		Return True if the fifo is empty. False otherwise
+		"""
+		if self.fifo == []
+			return True
+		return False
 	
 	def somethingIn(self):
 		"""
 		For notifying that there is something to pop.
 		"""
+		pathmanager.returnJob()
 		pass
 

@@ -16,26 +16,45 @@ class Pathmanager:
 	def __init__(self):
 		self.pathstorage = Pathstorage()
 		self.obstacle_map = [[]]
-		self.fifo = Fifo()
+		self.fifo = Fifo(self)
 		
-	def addJob(self, ID, start, end):
+	def addJob(self, reference, start, end):
 		"""
-		@param ID
+		@param reference the reference of the instance of the settler who needs the path
 		@param start the startnode
 		@param end the endnode
 		"""
-		th = threading.Thread(target = self.findPath, name=ID, args=(ID,start,end))
+		th = threading.Thread(target = self.findPath, name=reference, args=(reference,start,end))
 		th.start()
-		
 
-	def findPath(self, ID, start, end):
+	def cancelJob(self, reference):
+		"""
+		Cancels job if for example unit doesnt exist any longer.
+		"""
+		#TODO. how to kill single threads?
+		pass
+
+	def returnJob(self):
+		"""
+		Returns a path to the unit asking for it.
+		@param reference the reference of the instance asking for the path
+		@param path the path for the unit
+		"""
+		#while not self.fifo.isEmpty()
+			#job = self.fifo.pop()
+			#reference = job.keys()
+			#reference.callbackPath(job[reference])
+		pass
+
+	def findPath(self, reference, start, end):
 		"""
 		Start the computing of the Path.
-		@param ID
+		@param reference the reference of the settler who needs the path
 		@param start the startnode
 		@param end the endnode
 		"""
 		pf = Pathfinder(self.pathstorage)
+		lock = threading.Lock()
 		
 		path = pf.aStar(start, end, None)	# obstaclemap is None for testing
 		last_index = len(path) - 1
@@ -50,7 +69,9 @@ class Pathmanager:
 				for node in macro_path:
 					if i%2 == 0 and i+2 < last_index:
 						temp_path = pf.aStar(node, macro_path[i+2], None)
-						self.fifo.add(ID, temp_path)
+						lock.acquire()	# because only one thread should access the one fifo
+						self.fifo.add(reference, temp_path)
+						lock.release()
 						#print temp_path
 						for item in temp_path:
 							path.append(item)
@@ -58,7 +79,9 @@ class Pathmanager:
 						
 					elif i%2 == 0:	# now its really hot ;)
 						temp_path = pf.aStar(node, end, None)
-						self.fifo.add(ID, temp_path)
+						lock.acquire()
+						self.fifo.add(reference, temp_path)
+						lock.release()
 						#print temp_path
 						for item in temp_path:
 							path.append(item)
@@ -66,9 +89,13 @@ class Pathmanager:
 						
 					i = i + 1
 			else:
-				self.fifo.add(ID, path)
+				lock.acquire()
+				self.fifo.add(reference, path)
+				lock.release()
 		else:
-			self.fifo.add(ID, None)
+			lock.acquire()
+			self.fifo.add(reference, None)
+			lock.release()
 		#print path
 	
 	def updateObstaclemap(self):
