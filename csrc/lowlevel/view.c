@@ -4,10 +4,10 @@
 
 typedef unsigned int uint;
 
-void GFXEngineSDLOGL_DrawTerrain (uint **terra, uint mapsize, uint TRIA_W, uint TRIA_H,
+void DrawTerrain (uint **terra, uint mapsize, uint TRIA_W, uint TRIA_H,
 	uint TEX_FACTOR, uint *textures, int ***vertmap);
 
-void GFXEngineSDLOGL_DrawTerrain (uint **terra, uint mapsize, uint TRIA_W, uint TRIA_H,
+void DrawTerrain (uint **terra, uint mapsize, uint TRIA_W, uint TRIA_H,
 	uint TEX_FACTOR, uint *textures, int ***vertmap)
 {
 	uint x,y;
@@ -28,8 +28,8 @@ void GFXEngineSDLOGL_DrawTerrain (uint **terra, uint mapsize, uint TRIA_W, uint 
 			glBindTexture (GL_TEXTURE_2D, textures[terra[y][x]]);
 			
 			/* Line-loop to demonstrate the height map is working */
-			glBegin (GL_LINE_LOOP);
-			/*glBegin (GL_TRIANGLES);*/
+			/*glBegin (GL_LINE_LOOP);*/
+			glBegin (GL_TRIANGLES);
 			
 			if (!upt) {
 				glTexCoord2f (u, v);
