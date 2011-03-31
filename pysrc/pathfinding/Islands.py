@@ -16,12 +16,17 @@ class Islands:
 		
 	def getIslands(self, islands)
 		"""
-		If there is a correct dictionary one can input it here.
+		If there is a correct dictionary you can input it here.
 		@param islands the dictionary with coordinates as keys and islands as values
 		"""
 		self.islands = islands
 
-	def searchIslands(self):
+	def searchIslands(self, obstacle_map):
+		"""
+		Iterates over the nodes of the obstaclemap and tags every island with an 
+		distinct positiv number.
+		@param obstacle_map
+		"""
 		pass
 		
 	def sameIsland(self, start, end):

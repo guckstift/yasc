@@ -97,6 +97,11 @@ class Pathmanager:
 			self.fifo.add(reference, None)
 			lock.release()
 		#print path
+		
+	def findIslands(self):
+		"""
+		"""
+		pass
 	
 	def updateObstaclemap(self):
 		"""
