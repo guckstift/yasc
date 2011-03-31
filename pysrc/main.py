@@ -1,5 +1,5 @@
 
-from game import *
+from Game import *
 
 def main ():
 

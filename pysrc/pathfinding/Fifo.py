@@ -33,7 +33,7 @@ class Fifo:
 		"""
 		Return True if the fifo is empty. False otherwise
 		"""
-		if self.fifo == []
+		if self.fifo == []:
 			return True
 		return False
 	

@@ -1,7 +1,7 @@
 
 import pygame
 
-class EventManager :
+class InputManager :
 
 	"""
 	This class processes incoming user events
@@ -13,7 +13,11 @@ class EventManager :
 		
 		pygame.init ()
 	
-	def tick (self):
+	def process (self):
+	
+		"""
+		Process all new events
+		"""
 	
 		for event in pygame.event.get():
 			if event.type == pygame.KEYDOWN:

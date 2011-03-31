@@ -3,7 +3,7 @@ import ctypes
 
 from constants import *
 
-class Vertexarray :
+class VertexArray :
 
 	"""
 	This class supplies an array of 2D-vertices of a given map (currently only as 3D-c-types-array)

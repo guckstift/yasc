@@ -12,5 +12,9 @@ class GameController :
 	
 	def tick (self):
 	
+		"""
+		One cycle in the game loop
+		"""
+	
 		pass
 

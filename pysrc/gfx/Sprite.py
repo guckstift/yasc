@@ -4,14 +4,14 @@ import pygame
 class Sprite :
 
 	"""
-	A Sprite is any moveable and animated object in game scene.
+	A Sprite is any moveable or immobile, animated object in game scene.
 	"""
 	
 	def __init__ (self, viewspace, surface):
 	
 		self.viewspace = viewspace
 		self.surface = surface
-		# coordinates
+		# coordinates (screen-coordinates)
 		self.x = 0
 		self.y = 0
 		# sprite-origin
@@ -26,13 +26,13 @@ class Sprite :
 		self.fps = 20 # frames per second
 		self.framelen = 50 # framelength in milliseconds
 	
-	def configAnimation (self, enable, start, end, first, fps):
+	def configAnimation (self, enable, start, end, fps):
 	
 		self.animate = enable
 		if enable:
 			self.startframe = start
 			self.endframe = end
-			self.frame = first
+			self.frame = start
 			self.startframetime = 0
 			self.fps = fps
 			self.framelen = 1000.0/fps

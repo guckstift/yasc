@@ -1,10 +1,10 @@
 
 import ctypes
 
-from surface import *
+from Surface import *
 from constants import *
 
-class Terrainset :
+class TerrainSet :
 
 	"""
 	This class holds all terrain-graphics and darker and brighter versions of each

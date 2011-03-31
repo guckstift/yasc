@@ -10,8 +10,7 @@ class Display:
 	
 	def __init__ (self):
 	
-		self.resol = (800,600) # screen-resolution
-		self.midp = (400,300) # screen-midpoint
+		self.resolution = (800,600) # screen-resolution
 		self.bitdepth = 24
 		
 		pygame.display.init ()
@@ -25,7 +24,7 @@ class Display:
 			pygame.display.gl_set_attribute (pygame.GL_BLUE_SIZE, 8)
 			pygame.display.gl_set_attribute (pygame.GL_BUFFER_SIZE, 24)
 		else:
-			raise Exception ("Other bitdepths than 24 bits currently not supportet by DisplaySDLOGL") 
+			raise Exception ("Other bitdepths than 24 bits currently not supportet by Display") 
 
 		pygame.display.gl_set_attribute (pygame.GL_DOUBLEBUFFER, 1)
 		pygame.display.gl_set_attribute (pygame.GL_DEPTH_SIZE, 0)
@@ -40,7 +39,7 @@ class Display:
 		pygame.display.gl_set_attribute (pygame.GL_SWAP_CONTROL, 0)
 		pygame.display.gl_set_attribute (pygame.GL_ACCELERATED_VISUAL, 0)
 
-		pygame.display.set_mode (self.resol, pygame.OPENGL|pygame.DOUBLEBUF, self.bitdepth)
+		pygame.display.set_mode (self.resolution, pygame.OPENGL|pygame.DOUBLEBUF, self.bitdepth)
 		
 		glEnable (GL_TEXTURE_2D)
 		
@@ -48,7 +47,7 @@ class Display:
 		
 		glMatrixMode (GL_PROJECTION)
 		glLoadIdentity ()
-		glOrtho (0.0, float(self.resol[0]), float(self.resol[1]), 0.0, -1.0, 1.0)
+		glOrtho (0.0, float(self.resolution[0]), float(self.resolution[1]), 0.0, -1.0, 1.0)
 	
 	def clear (self):
 	

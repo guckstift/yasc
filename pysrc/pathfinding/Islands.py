@@ -14,7 +14,7 @@ class Islands:
 		"""
 		self.islands = {}
 		
-	def getIslands(self, islands)
+	def getIslands(self, islands):
 		"""
 		If there is a correct dictionary you can input it here.
 		@param islands the dictionary with coordinates as keys and islands as values
