@@ -4,6 +4,7 @@
 from Pathstorage import *
 from Pathfinder import *
 from Fifo import *
+from Islands import *
 import threading
 import time
 
@@ -11,12 +12,14 @@ class Pathmanager:
 	"""
 	Organizes the pathfinding. Can start serveral threads, realizes the two-tiered
 	pathfinding, cares about the obstaclemap ...
+	# TODO: ObstacleMap
 	"""
 	
 	def __init__(self):
 		self.pathstorage = Pathstorage()
 		self.obstacle_map = [[]]
 		self.fifo = Fifo(self)
+		self.islands = Islands()
 		
 	def addJob(self, reference, start, end):
 		"""
@@ -53,13 +56,19 @@ class Pathmanager:
 		@param start the startnode
 		@param end the endnode
 		"""
-		pf = Pathfinder(self.pathstorage)
-		lock = threading.Lock()
 		
-		path = pf.aStar(start, end, None)	# obstaclemap is None for testing
-		last_index = len(path) - 1
+		if self.islands.sameIsland(start, end):
+			pf = Pathfinder(self.pathstorage)
+			lock = threading.Lock()
+			
+			path = pf.aStar(start, end, None)	# obstaclemap is None for testing
+			last_index = len(path) - 1
 		
-		if path != []:
+		else:
+			path = []	# start- and endpoint not at the same island
+		
+		
+		if path != []:	# TODO: if both nodes are at the same island, there should be a path every time
 			if abs(path[0][0] - path[1][0]) > 1 or abs(path[0][1] - path[1][1]) > 1:
 				# macro path was computed
 				macro_path = path
@@ -77,7 +86,7 @@ class Pathmanager:
 							path.append(item)
 						time.sleep(2)
 						
-					elif i%2 == 0:	# now its really hot ;)
+					elif i%2 == 0:	# endnode is closer than one macrostep
 						temp_path = pf.aStar(node, end, None)
 						lock.acquire()
 						self.fifo.add(reference, temp_path)
@@ -100,11 +109,14 @@ class Pathmanager:
 		
 	def findIslands(self):
 		"""
+		Let the class Islands find and store islands.
 		"""
-		pass
+		#self.updateObstaclemap()
+		self.islands.searchIslands(self.obstacle_map)
 	
 	def updateObstaclemap(self):
 		"""
+		Be up to date.
 		"""
 		pass
 		

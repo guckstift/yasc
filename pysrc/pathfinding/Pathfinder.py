@@ -15,11 +15,10 @@ class Pathfinder:
 		priorityqueueset.py
 		pathstorage.py
 		
-	TODO: 	*no error if coord is greater than border
+	TODO: 	*errormessage if coord is greater than border
 		*sometimes not the direct path is chosen, if another one has the 
 		same length
 		*not storing reversed pathes
-		*how to recognize unreachable areas?
 	"""
 
 	def __init__(self, pathstorage, macro_path_length=4):
@@ -80,7 +79,7 @@ class Pathfinder:
 		
 			closed_list.append(curr_node)
 
-			for succ_coord in self._successors(curr_node.coord, step_size):
+			for succ_coord in self.successors(curr_node.coord, step_size):
 				succ_node = self.Node(succ_coord)
 				succ_node.gcost = curr_node.gcost + 1	# the cost from one node to another is always 1
 				succ_node.hcost = self.pathHeuristic(succ_node.coord, (ex, ey))
@@ -130,7 +129,7 @@ class Pathfinder:
 		return man_dist - min(dx, max_diagonals)
 
 
-	def _successors(self, coord, step_size=1):
+	def successors(self, coord, step_size=1):
 		"""
 		Computes all possible successors of the given coord
 		@param coord the coordinate of which all successors will be computed
@@ -348,16 +347,16 @@ class Pathfinder:
 		@param obstacle_map the array of rows with a boolean for every node if it 
 		is blocked. Every row is an array itself.
 		"""
-		if obstacle_map == None:
-			self.obstacle_map = [[False, True, True, True], 
-					[False, True, False, False], 
-					[False, False, False, False], 
-					[True, True, True, True],
-					[False, False, False, False],
-					[False, True, False, False],
-					[False, False, False, False]]
-		else:
-			self.obstacle_map = obstacle_map
+		#if obstacle_map == None:
+		#	self.obstacle_map = [[False, True, True, True], 
+		#			[False, True, False, False], 
+		#			[False, False, False, False], 
+		#			[True, True, True, True],
+		#			[False, False, False, False],
+		#			[False, True, False, False],
+		#			[False, False, False, False]]
+		#else:
+		self.obstacle_map = obstacle_map
 		
 		self.mapsize = len(self.obstacle_map) - 1	# the size of the map in triangles
 		self.mapsize = 1000
