@@ -43,8 +43,9 @@ class Pathmanager:
 		@param reference the reference of the instance asking for the path
 		@param path the path for the unit
 		"""
-		#while not self.fifo.isEmpty()
-			#job = self.fifo.pop()
+		while not self.fifo.isEmpty()
+			job = self.fifo.pop()
+			print job
 			#reference = job.keys()
 			#reference.callbackPath(job[reference])
 		pass
@@ -116,7 +117,7 @@ class Pathmanager:
 	
 	def updateObstaclemap(self):
 		"""
-		Be up to date.
+		Be up to date. Checks every node wheather it is blocked (permanently, not by units) or not.
 		"""
 		pass
 		
