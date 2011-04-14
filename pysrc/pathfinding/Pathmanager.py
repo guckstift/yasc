@@ -20,6 +20,8 @@ class Pathmanager:
 		self.obstacle_map = [[]]
 		self.fifo = Fifo(self)
 		self.islands = Islands()
+		self.jobs = {}	# contains all pathfindingjobs
+		self.job_ID = 0 # the ID for a pathfindingjob - must be unique
 		
 	def addJob(self, reference, start, end):
 		"""
@@ -27,12 +29,15 @@ class Pathmanager:
 		@param start the startnode
 		@param end the endnode
 		"""
-		th = threading.Thread(target = self.findPath, name=reference, args=(reference,start,end))
-		th.start()
+		#TODO: there will be a problem if finished jobs where not deleted from list
+		self.jobs[self.job_ID] = threading.Thread(target = self.findPath, name=self.job_ID, args=(reference,start,end))
+		self.jobs[self.job_ID].start()
+		self.job_ID += 1
 
-	def cancelJob(self, reference):
+	def cancelJob(self, job_ID):
 		"""
 		Cancels job if for example unit doesnt exist any longer.
+		@param job_ID the ID which is the name of the thread and the ID in the set of jobs
 		"""
 		#TODO. how to kill single threads?
 		pass
