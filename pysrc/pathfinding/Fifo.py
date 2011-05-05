@@ -41,6 +41,6 @@ class Fifo:
 		"""
 		For notifying that there is something to pop.
 		"""
-		pathmanager.returnJob()
+		self.pathmanager.returnJob()
 		pass
 

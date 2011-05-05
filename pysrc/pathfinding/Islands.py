@@ -30,7 +30,7 @@ class Islands:
 		distinct positiv number.
 		@param obstacle_map array of rows, True for blocked node
 		"""
-		tag = 0
+		tag = 0	# every island gets a unique tag
 		
 		for y in range(len(obstacle_map)):
 			for x in range(len(obstacle_map[0])):	# y instead of 0 should work too
@@ -53,7 +53,7 @@ class Islands:
 
 	def _fill(self, start_coord, island_tag):
 		"""
-		Gets a hole area (island) by using the iterative floodfilling algorithm.
+		Usesd by the searchIslands method. Gets a hole area (island) by using the iterative floodfilling algorithm.
 		@param start_coord the coordinate to start with the floodfill algorithm
 		@param island_tag the tag for this specific island
 		"""

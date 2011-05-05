@@ -7,6 +7,7 @@ from Job import *
 class Jobmanager:
 	"""
 	Manages all jobs for the carriers, graders, builders etc.
+	There is an Jobmanagerinstance for every player.
 	"""
 	
 	def __init__(self):
@@ -17,6 +18,7 @@ class Jobmanager:
 		self.carrier_number = 0
 		self.grader_list = []
 		self.builder_list = []
+		self.jobless = []	# those who have a job, but no building
 		self.jobs = {}
 		self.job_ID = 0
 

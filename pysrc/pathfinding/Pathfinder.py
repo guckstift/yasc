@@ -53,7 +53,7 @@ class Pathfinder:
 		open_set = PriorityQueueSet()	# nodes which are possible for the path
 		step_size = 1	# the pathlength between node and his successors
 		
-		start_node = self.Node((sx, sy), 0, None)
+		start_node = self._Node((sx, sy), 0, None)
 		start_node.hcost = self.pathHeuristic((sx, sy), (ex, ey))
 		open_set.add(start_node)
 		
@@ -74,13 +74,17 @@ class Pathfinder:
 	
 				if step_size == 1:	
 					self.pathstorage.add(nodelist)
-	
+					
+					if end in nodelist:
+						nodelist.append("end","point")	# last point in list is the endpoint
+					else:
+						nodelist.append("go","on")	# last pint in list isnt endpoint of the whole path but of a part of the macropath
 				return nodelist	# a path was found
 		
 			closed_list.append(curr_node)
 
 			for succ_coord in self.successors(curr_node.coord, step_size):
-				succ_node = self.Node(succ_coord)
+				succ_node = self._Node(succ_coord)
 				succ_node.gcost = curr_node.gcost + 1	# the cost from one node to another is always 1
 				succ_node.hcost = self.pathHeuristic(succ_node.coord, (ex, ey))
 								
@@ -365,7 +369,7 @@ class Pathfinder:
 		return path
 		
 		
-	class Node:
+	class _Node:
 		"""
 		Represents a single node at the map
 		"""
@@ -392,7 +396,7 @@ class Pathfinder:
 				
 		def getFcost(self):
 			"""
-			Returns the cost f(x) of this node
+			Returns the cost f(x) of this node. Its the sum of g(x) and h(x)
 			"""
 			return self.gcost + self.hcost
 
