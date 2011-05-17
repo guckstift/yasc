@@ -4,7 +4,7 @@
 class Fifo:
 	"""
 	A typical FIFO buffer.
-	@param pathmanager the instance of the pathmanager initialising this fifo
+	@param pathmanager: the instance of the pathmanager initialising this fifo
 	"""
 
 	def __init__(self, pathmanager):
@@ -31,7 +31,7 @@ class Fifo:
 
 	def isEmpty(self):
 		"""
-		Return True if the fifo is empty. False otherwise
+		@return: True if the fifo is empty. False otherwise
 		"""
 		if self.fifo == []:
 			return True

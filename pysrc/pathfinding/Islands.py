@@ -20,7 +20,7 @@ class Islands:
 	def getIslands(self, islands):
 		"""
 		If there is a correct dictionary you can input it here.
-		@param islands the dictionary with coordinates as keys and islands as values
+		@param islands: the dictionary with coordinates as keys and islands as values
 		"""
 		self.islands = islands
 
@@ -28,7 +28,7 @@ class Islands:
 		"""
 		Iterates over the nodes of the obstaclemap and tags every island with an 
 		distinct positiv number.
-		@param obstacle_map array of rows, True for blocked node
+		@param obstacle_map: array of rows, True for blocked node
 		"""
 		tag = 0	# every island gets a unique tag
 		
@@ -42,9 +42,9 @@ class Islands:
 	def sameIsland(self, start, end):
 		"""
 		Gets two tuples and returns True whether the two points are at the same island.
-		@param start the startpoint of the pathfindingalgorithm
-		@param end the endpoint of the pathfindingalgorithm
-		@return True if the two points are at the same island, False otherwise
+		@param start: the startpoint of the pathfindingalgorithm
+		@param end: the endpoint of the pathfindingalgorithm
+		@return: True if the two points are at the same island, False otherwise
 		"""
 		if self.islands[start] == self.islands[end]:
 			return True
@@ -54,8 +54,8 @@ class Islands:
 	def _fill(self, start_coord, island_tag):
 		"""
 		Usesd by the searchIslands method. Gets a hole area (island) by using the iterative floodfilling algorithm.
-		@param start_coord the coordinate to start with the floodfill algorithm
-		@param island_tag the tag for this specific island
+		@param start_coord: the coordinate to start with the floodfill algorithm
+		@param island_tag: the tag for this specific island
 		"""
 		stack = []
 		

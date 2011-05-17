@@ -7,4 +7,5 @@ gfx
 pybin
 render
 doc/dias/*.dia
+*~
 

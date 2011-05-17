@@ -20,32 +20,84 @@ class Job(threading.Thread):
 		"""
 		self.endpoint = self.from_reference.coord	# the endpoint of every job is the thing ordering this job
 
-		if to_do == "carry":	# carry sth. from A to B
-			pass
-		elif to_do == "grade":	# grade an area for a building
-			unit = self.searchUnit(self.endpoint, "grader")
+		if to_do == "carry":
+			self.carry()
+		
+		elif to_do == "grade":
+			self.grade()
 			
-		elif to_do == "build":	# build a building
-			unit = self.searchUnit(self.endpoint, "builder")
-		#TODO: if no settler fits to the building to be seized, one settler has to learn the job
-		elif to_do == "learn a job":	# learn a job like lumberjack, butcher ... also for the soldier training
-			pass
-		elif to_do == "seize a building":	# civil and also military buildings
-			pass
+		elif to_do == "build":
+			self.build()
+			
+		elif to_do == "learn a job":
+			self.learnJob()
+			
+		elif to_do == "seize a building":	
+			self.seizeBuilding()
+			
 
-	def searchUnit(self, coord, unit):
+	def carry(self):
+		# carry sth. from A to B
+		# search the thing to carry (as near as possible to B)
+		# search a carrier near the thing to carry
+		# send the carrier to the spot where the thing is
+		# let him grab the thing
+		# let him carry the thing to B
+		pass
+	
+	def build(self):
+		# build a building
+		# search a number of builders near the building
+		# send them to the building
+		# let them build
+		unit = self._searchUnit(self.endpoint, "builder")
+		pass
+	
+	def grade(self):
+		# grade an area for a building
+		# search a number of graders near the area
+		# send these units to the area
+		# let them work
+		unit = self._searchUnit(self.endpoint, "grader")
+		pass
+	
+	def learnJob(self):
+		#TODO: if no settler fits to the building to be seized, one settler has to learn the job
+		# learn a job like lumberjack, butcher ... also for the soldier training
+		pass
+	
+	def seizeBuilding(self):
+		# civil and also military buildings
+		# search a fitting settler near the building to be seized
+		# send the unit to the building
+		# associate him with the building
+		# OR
+		# search a settler with fitting occupation and associate him with the building
+		pass
+	
+	
+	def _searchUnit(self, coord, unit):
 		"""
-		@param coord the coordinate from which the request comes, normally a building
-		@param unit what unit do you searching for?
-		@return the unit fitting the conditions
+		Searches the nearest unit (to coord)
+		@param coord: the coordinate from which the request comes, normally a building
+		@param unit: what unit do you searching for?
+		@return: the unit fitting the conditions
 		"""
 		#TODO: searching unit with floodfill algorithm?
 		pass
 		#return unit
 	
+	def _searchRessource(self, coord, ressource):
+		"""
+		Searches the nearest point (to coord) at which a ressource is laying.
+		@param coord: the coordinate to which the ressource has to be transported
+		@param ressource: which ressource has to be carried
+		@return: a coord 
+		"""
+	
 	def callbackPath(self, path):
 		"""
-		@param path one/the path for this job.
+		@param path: one/the path for this job.
 		"""
 		if path == None:
 			print "Start- and endpoint not at the same island. No move possible."

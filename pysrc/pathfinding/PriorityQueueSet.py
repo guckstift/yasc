@@ -71,7 +71,7 @@ class PriorityQueueSet:
 		(i.e. lower), the priority of the existing item in the 
 		queue will be updated.
 		
-		Returns True iff the item was added or updated.
+		@return: True if the item was added or updated.
 		"""
 		if not item in self.data:
 			self.data[item] = item

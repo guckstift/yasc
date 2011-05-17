@@ -26,9 +26,9 @@ class Pathmanager:
 		
 	def addJob(self, reference, start, end):
 		"""
-		@param reference the reference of the instance of the settler who needs the path
-		@param start the startnode
-		@param end the endnode
+		@param reference: the reference of the instance of the settler who needs the path
+		@param start: the startnode
+		@param end: the endnode
 		"""
 		#TODO: there will be a problem if finished jobs where not deleted from list
 		self.jobs[self.job_ID] = threading.Thread(target = self.findPath, name=self.job_ID, args=(reference,start,end))
@@ -38,7 +38,7 @@ class Pathmanager:
 	def cancelJob(self, job_ID):
 		"""
 		Cancels job if for example unit doesnt exist any longer.
-		@param job_ID the ID which is the name of the thread and the ID in the set of jobs
+		@param job_ID: the ID which is the name of the thread and the ID in the set of jobs
 		"""
 		#TODO. how to kill single threads?
 		pass
@@ -57,9 +57,9 @@ class Pathmanager:
 	def findPath(self, reference, start, end):
 		"""
 		Start computing the Path.
-		@param reference the reference of the settler who needs the path
-		@param start the startnode
-		@param end the endnode
+		@param reference: the reference of the settler who needs the path
+		@param start: the startnode
+		@param end: the endnode
 		"""
 		
 		if self.islands.sameIsland(start, end):

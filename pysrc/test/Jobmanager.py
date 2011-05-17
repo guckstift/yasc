@@ -25,8 +25,8 @@ class Jobmanager:
 	def newJob(self, from_reference, to_do):
 		"""
 		Starts a new Job in its own thread. The Object calling this method must be the endpoint of the Job.
-		@param from_reference the reference of the object from which the job is
-		@param to_do what has to be done
+		@param from_reference: the reference of the object from which the job is
+		@param to_do: what has to be done
 		"""
 		#TODO: joblist as a FIFO ???
 		self.jobs[self.job_ID] = Job(self.job_ID, from_reference, to_do)

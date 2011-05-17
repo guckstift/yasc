@@ -11,8 +11,8 @@ class Pathstorage:
 		"""
 		Adds a new path into the storage. Normally a path with the same key, but another
 		value will overwrite an old one. Control this behaviour with the replace-switch.
-		@param path the path to be stored (must be a non empty list of 2-tuples)
-		@param replace by default this switch is true, which means newer pathes will
+		@param path: the path to be stored (must be a non empty list of 2-tuples)
+		@param replace: by default this switch is true, which means newer pathes will
 			replace older ones with the same key (start- and endpoint)
 		"""		
 		self.length1 = len(path) - 1
@@ -30,9 +30,9 @@ class Pathstorage:
 		"""
 		Removes a single path from the storage. If nothing is passed to this method,
 		nothing will be deleted.
-		@param pathkey the start- and endpoint of the path (must be a 2-tuple of 
+		@param pathkey: the start- and endpoint of the path (must be a 2-tuple of 
 		2-tuples) to be deleted
-		@param path the hole path to be deleted
+		@param path: the hole path to be deleted
 		"""
 		if pathkey != None:	# use key for identifying the path
 			del self.storage[pathkey]
@@ -49,8 +49,8 @@ class Pathstorage:
 		Searches a path in the storage by its key, which is a tuple with the 
 		start- and the endpoint of the path. The function also searches for reversed
 		pathes.
-		@param pathkey a 2-tuple of 2-tuples 
-		@return returns either the path if it is in the storage or an empty list if not
+		@param pathkey: a 2-tuple of 2-tuples 
+		@return: either the path if it is in the storage or an empty list if not
 		"""
 		if pathkey in self.storage.keys():
 			return self.storage[pathkey]
