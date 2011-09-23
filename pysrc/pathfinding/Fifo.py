@@ -4,10 +4,12 @@
 class Fifo:
 	"""
 	A typical FIFO buffer.
-	@param pathmanager the instance of the pathmanager initialising this fifo
 	"""
 
 	def __init__(self, pathmanager):
+		"""
+		@param pathmanager: the instance of the pathmanager initialising this fifo
+		"""
 		self.pathmanager = pathmanager 	# the instance of the pathmanager
 		self.fifo = []
 		

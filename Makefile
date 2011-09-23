@@ -72,4 +72,4 @@ totalclean:
 
 epydoc:
 	mkdir -p doc
-	epydoc --html pysrc -o doc/pysrc --config epydoc.conf --parse-only
+	epydoc --html pysrc -o doc/pysrc --config epydoc.conf --parse-only -v

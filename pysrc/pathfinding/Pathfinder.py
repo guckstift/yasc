@@ -7,23 +7,24 @@ from Pathstorage import *
 class Pathfinder:
 	"""
 	The class organizing everything about pathfinding.
-	@param pathstorage the storage with all computed pathes from actual gamesession
-	@param macro_path_length optional parameter (default 4). Defines the length of the
-	macro pathes. Must be even.
 	
 	Needs following files:
 		priorityqueueset.py
 		pathstorage.py
-		
-	TODO: 	*errormessage if coord is greater than border
-		*sometimes not the direct path is chosen, if another one has the 
-		same length
-		*not storing reversed pathes
-	"""
+	"""	
+	#TODO: 	*errormessage if coord is greater than border
+	#	*sometimes not the direct path is chosen, if another one has the 
+	#	same length
+	#	*not storing reversed pathes
+	
 
 	def __init__(self, pathstorage, macro_path_length=4):
+		"""
+		@param pathstorage: the storage with all computed pathes from actual gamesession
+		@param macro_path_length: optional parameter (default 4). Defines the length of the macro pathes. Must be even.
+		"""
 		if macro_path_length%2 != 0 or macro_path_length == 0:
-			raise ValueError ("Bad macro_path_length!")
+			raise ValueError ("Bad macro-path-length!")
 			
 		self.macro_path_length = macro_path_length
 		self.pathstorage = pathstorage
@@ -33,9 +34,9 @@ class Pathfinder:
 		Implements the A-Star algorithm (computes the path between start- and endpoint)
 		The path is returned as an iterator to the points, 
 		including the start- and endpoints themselves.
-		@param start a 2-tuple with x- and y-coordinate of the startpoint
-		@param end same as start
-		@return if a path could be found it will be returned. If no path was found, 
+		@param start: a 2-tuple with x- and y-coordinate of the startpoint
+		@param end: same as start
+		@return: if a path could be found it will be returned. If no path was found, 
 		an empty list is returned.
 		"""
 		# if the start- and endpoints are stored already, the stored path will be
@@ -98,9 +99,9 @@ class Pathfinder:
 		"""
 		Calculates the distance of the shortest path between start- (sx,sy) and 
 		endpoint (ex,ey).
-		@param start a coordinat-tuple (x,y) of the startpoint
-		@param end a coordinat-tuple (x,y) of the endpoint
-		@return the minimal distance between the start- and endpoint
+		@param start: a coordinat-tuple (x,y) of the startpoint
+		@param end: a coordinat-tuple (x,y) of the endpoint
+		@return: the minimal distance between the start- and endpoint
 		"""
 		sx = start[0] 	# the x-coordinate of the startpoint
 		sy = start[1]	# the y-coordinate of the startpoint
@@ -136,8 +137,8 @@ class Pathfinder:
 	def successors(self, coord, step_size=1):
 		"""
 		Computes all possible successors of the given coord
-		@param coord the coordinate of which all successors will be computed
-		@return a List with all successing nodes
+		@param coord: the coordinate of which all successors will be computed
+		@return: a List with all successing nodes
 		"""
 		succ_list = []	# list with all possible successors of the given node
 		
@@ -252,10 +253,10 @@ class Pathfinder:
 		"""
 		Computes all possible successors of coord with the given stepsize. This is
 		only for steps greater than 1.
-		@param coord the coordinate for witch the successors will be computed
-		@param step_size the stepsize
-		@param n_x the maximal x-coordinate
-		@param n_y the maximal y-coordinate
+		@param coord: the coordinate for witch the successors will be computed
+		@param step_size: the stepsize
+		@param n_x: the maximal x-coordinate
+		@param n_y: the maximal y-coordinate
 		"""
 		macro_succ_list = []
 		
@@ -331,8 +332,8 @@ class Pathfinder:
 		Reconstructs the path to the given node from the start node
 		(for which .pred is None) by using the predecessor reference 
 		and finally reversing the order of the elements
-		@param node the endnode at the path
-		@return an iterator representing the path
+		@param node: the endnode at the path
+		@return: an iterator representing the path
 		"""
 		path = [node.coord]
 		n = node
@@ -346,9 +347,9 @@ class Pathfinder:
 	def aStar(self, start, end, obstacle_map):
 		"""
 		The entrymethod for pathfinding.
-		@param start the startnode
-		@param end the endnode
-		@param obstacle_map the array of rows with a boolean for every node if it 
+		@param start: the startnode
+		@param end: the endnode
+		@param obstacle_map: the array of rows with a boolean for every node if it 
 		is blocked. Every row is an array itself.
 		"""
 		#if obstacle_map == None:
@@ -376,9 +377,9 @@ class Pathfinder:
 
 		def __init__(self, coord, g = None, pred = None):
 			"""
-			@param coord the coordinates of the node
-			@param g the cost from the startpoint to this point
-			@param pred a reference to the predecessor
+			@param coord: the coordinates of the node
+			@param g: the cost from the startpoint to this point
+			@param pred: a reference to the predecessor
 			"""
 			self.coord = coord	# the coordinates of this point
 			self.gcost = g		# the cost from the startpoint to this point
