@@ -15,7 +15,13 @@ endef
 
 # VARIABLES
 
-PLATFORM := $(shell python -B pfinfo.py)
+ifeq "$(shell lsb_release -i | grep -o Arch)" "Arch"
+PYTHON = "python2"
+else
+PYTHON = "python"
+endif
+
+PLATFORM := $(shell $(PYTHON) -B pfinfo.py)
 
 CMODS := $(wildcard csrc/*.c) $(wildcard csrc/*/*.c)
 CLIBS := $(foreach cmod,$(CMODS),$(call CSRC2CLIB,$(cmod)))
@@ -31,11 +37,11 @@ gfx: gfx/terrain/grass.png gfx/protosettler.png
 
 gfx/terrain/grass.png: render/terrain/grass.png
 	mkdir -p "$(dir $@)"
-	python scripts/postprocess_texture.py "$^" "$@"
+	$(PYTHON) scripts/postprocess_texture.py "$^" "$@"
 
 gfx/protosettler.png: render/protosettler/noshd-0001.png render/protosettler/onlshd-0001.png
 	mkdir -p "$(dir $@)"
-	python scripts/postprocess_settler.py "$(dir $<)" "$@" 1 156
+	$(PYTHON) scripts/postprocess_settler.py "$(dir $<)" "$@" 1 156
 
 render/terrain/grass.png: blender/terrain/grass.blend
 	$(BLENDER) -b "$^" -o "$(subst .png,,$@)" -f 1
@@ -57,7 +63,7 @@ pybin: $(PYBINS)
 
 pybin/%.pyc: pysrc/%.py
 	mkdir -p "$(dir $@)"
-	python pyc.py "$^" "$@"
+	$(PYTHON) pyc.py "$^" "$@"
 
 clean:
 	-rm -r bin
