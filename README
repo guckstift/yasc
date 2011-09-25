@@ -7,6 +7,7 @@ configure the project
 python
 python-pygame
 python-opengl
+libsdl1.2-dev
 
 2. For rendering textures and game-objects you further need the newest Blender-version
 (currently 2.56a [beta]). Download a matching binary-package for your machine
