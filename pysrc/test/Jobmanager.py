@@ -3,6 +3,8 @@
 
 import threading
 from Job import *
+from BuildingRecipes import *
+from SettlerRecipes import *
 
 class Jobmanager:
 	"""
@@ -14,13 +16,19 @@ class Jobmanager:
 		"""
 		Initializes the lists for the references of the units and the joblist.
 		"""
-		#self.carrier_list = []
+		# maybe not necessary if there are lists anywhere else:
 		self.carrier_number = 0
 		self.grader_list = []
 		self.builder_list = []
 		self.jobless = []	# those who have a job, but no building
-		self.jobs = {}
-		self.job_ID = 0
+		
+		self.jobs = []
+		
+		self.b_recipes = BuildingRecipes()
+		self.s_recipes = SettlerRecipes()
+		
+		self._updateUnitList()
+
 
 	def newJob(self, from_reference, to_do):
 		"""
@@ -28,15 +36,24 @@ class Jobmanager:
 		@param from_reference: the reference of the object from which the job is
 		@param to_do: what has to be done
 		"""
-		#TODO: joblist as a FIFO ???
-		self.jobs[self.job_ID] = Job(self.job_ID, from_reference, to_do)
-		self.jobs[self.job_ID].start()
-		self.job_ID += 1
+		self._updateUnitList()
+		self.jobs.append(Job(from_reference, to_do, self))
+		self.jobs[len(jobs)-1].start()
 		
-		
-	def updateUnitList(self):
-		pass
 	
+	def clearJobList(self, jobreference):
+		"""
+		Removes calling job from the joblist.
+		@param jobreference: the reference of the job to be canceled
+		"""	
+		if jobreference in self.jobs:
+			self.jobs.remove(jobreference)
+		else:
+			raise ValueError("Wrong jobreference!")
+			
 		
-	def sendUnit(self):
+			
+	def _updateUnitList(self):
+		"""
+		"""
 		pass

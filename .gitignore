@@ -8,4 +8,4 @@ pybin
 render
 doc/dias/*.dia
 *~
-
+*.swp

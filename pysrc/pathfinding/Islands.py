@@ -8,8 +8,9 @@ class Islands:
 	This class manages the so called "islands", areas not reachable one below the other.
 	Its important for the pathfinding algorithm, otherwise he will look at the hole island
 	for the endpoint.
-	# TODO: sending of obstacle map between Islands and Pathfinder (successorscalculation)
 	"""
+	# TODO: sending of obstacle map between Islands and Pathfinder (successorscalculation)
+	
 	def __init__(self):
 		"""
 		Initializes the dictionary with coordinates as keys and a positiv number for
@@ -17,7 +18,7 @@ class Islands:
 		"""
 		self.islands = {}
 		
-	def getIslands(self, islands):
+	def setIslands(self, islands):
 		"""
 		If there is a correct dictionary you can input it here.
 		@param islands: the dictionary with coordinates as keys and islands as values

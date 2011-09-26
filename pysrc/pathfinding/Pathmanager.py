@@ -13,16 +13,18 @@ class Pathmanager:
 	Organizes the pathfinding. Can start serveral threads, realizes the two-tiered
 	pathfinding, cares about the obstaclemap ...
 	There is one Pathmanager per match. He cares about all pathrequest from all players.
-	# TODO: ObstacleMap
 	"""
+	# TODO: ObstacleMap
+	
 	
 	def __init__(self):
 		self.pathstorage = Pathstorage()
 		self.obstacle_map = [[]]
 		self.fifo = Fifo(self)
 		self.islands = Islands()
-		self.jobs = {}	# contains all pathfindingjobs
-		self.job_ID = 0 # the ID for a pathfindingjob - must be unique
+		#TODO: searching Islands!
+		self.jobs = []	# contains all pathfindingjobs
+		
 		
 	def addJob(self, reference, start, end):
 		"""
@@ -30,18 +32,9 @@ class Pathmanager:
 		@param start: the startnode
 		@param end: the endnode
 		"""
-		#TODO: there will be a problem if finished jobs where not deleted from list
-		self.jobs[self.job_ID] = threading.Thread(target = self.findPath, name=self.job_ID, args=(reference,start,end))
-		self.jobs[self.job_ID].start()
-		self.job_ID += 1
-
-	def cancelJob(self, job_ID):
-		"""
-		Cancels job if for example unit doesnt exist any longer.
-		@param job_ID: the ID which is the name of the thread and the ID in the set of jobs
-		"""
-		#TODO. how to kill single threads?
-		pass
+		self.jobs.append(threading.Thread(target = self.findPath, args=(reference,start,end)))
+		self.jobs[len(self.jobs)-1].start()
+		
 
 	def returnJob(self):
 		"""
@@ -53,6 +46,7 @@ class Pathmanager:
 			reference = job.keys()
 			reference.callbackPath(job[reference])
 		#pass
+		
 
 	def findPath(self, reference, start, end):
 		"""
@@ -110,12 +104,14 @@ class Pathmanager:
 			lock.release()
 		#print path
 		
+		
 	def findIslands(self):
 		"""
 		Let the class Islands find and store islands.
 		"""
 		#self.updateObstaclemap()
 		self.islands.searchIslands(self.obstacle_map)
+		
 	
 	def updateObstaclemap(self):
 		"""

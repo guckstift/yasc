@@ -7,23 +7,24 @@ from Pathstorage import *
 class Pathfinder:
 	"""
 	The class organizing everything about pathfinding.
-	@param pathstorage: the storage with all computed pathes from actual gamesession
-	@param macro_path_length: optional parameter (default 4). Defines the length of the
-	macro pathes. Must be even.
 	
 	Needs following files:
 		priorityqueueset.py
 		pathstorage.py
-		
-	TODO: 	*errormessage if coord is greater than border
-		*sometimes not the direct path is chosen, if another one has the 
-		same length
-		*not storing reversed pathes
-	"""
+	"""	
+	#TODO: 	*errormessage if coord is greater than border
+	#	*sometimes not the direct path is chosen, if another one has the 
+	#	same length
+	#	*not storing reversed pathes
+	
 
 	def __init__(self, pathstorage, macro_path_length=4):
+		"""
+		@param pathstorage: the storage with all computed pathes from actual gamesession
+		@param macro_path_length: optional parameter (default 4). Defines the length of the macro pathes. Must be even.
+		"""
 		if macro_path_length%2 != 0 or macro_path_length == 0:
-			raise ValueError ("Bad macro_path_length!")
+			raise ValueError ("Bad macro-path-length!")
 			
 		self.macro_path_length = macro_path_length
 		self.pathstorage = pathstorage
