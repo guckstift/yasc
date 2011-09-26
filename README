@@ -8,14 +8,19 @@ python
 python-pygame
 python-opengl
 libsdl1.2-dev
+lsb-release
 
-2. For rendering textures and game-objects you further need the newest Blender-version
-(currently 2.56a [beta]). Download a matching binary-package for your machine
-from http://www.blender.org/ , extract to a directory of your choice, and customize the BLENDER
-variable in the "Makefile" so that it points to the actual program-file of your new Blender-version.
+   With ArchLinux you need these packages:
 
-3. Now do "make" in the project root directory, this does: Rendering, Gfx-Postprocessing,
-C-Compiling and Python-Compiling.
+python2
+python-pygame
+python-opengl
+sdl
+lsb-release
+
+2. For rendering textures and game-objects you further need the newest Blender-version (currently 2.59). Download a matching binary-package for your machine from http://www.blender.org/ , extract it to a directory of your choice, and customize the BLENDER-variable in localMakefile (you may have to create this file) so that it points to the binary in the Blender-programfile.
+
+3. Now do "make" in the project root directory, this does: Rendering, Gfx-Postprocessing, C-Compiling and Python-Compiling.
 
 4. Start game with "bash launch.sh"
 
@@ -29,6 +34,10 @@ build an epydoc reference
 1. With Ubuntu you need the package:
 
 python-epydoc
+
+   With ArchLinux you need the package:
+
+epydoc
 
 2. From the project's root directory do "make epydoc".
 

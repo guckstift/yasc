@@ -1,3 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 
-python pybin/main.pyc
+if [ -n "$(lsb_release -i | grep Arch)" ]; then
+	python2 pybin/main.pyc
+else
+	python pybin/main.pyc
+fi
