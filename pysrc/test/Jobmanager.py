@@ -22,13 +22,13 @@ class Jobmanager:
 		self.builder_list = []
 		self.jobless = []	# those who have a job, but no building
 		
-		self.jobs = {}
-		self.job_ID = 0
+		self.jobs = []
 		
 		self.b_recipes = BuildingRecipes()
 		self.s_recipes = SettlerRecipes()
 		
 		self._updateUnitList()
+
 
 	def newJob(self, from_reference, to_do):
 		"""
@@ -37,12 +37,22 @@ class Jobmanager:
 		@param to_do: what has to be done
 		"""
 		self._updateUnitList()
-		#TODO: joblist as a FIFO ???
-		self.jobs[self.job_ID] = Job(self.job_ID, from_reference, to_do, self)
-		self.jobs[self.job_ID].start()
-		self.job_ID += 1
+		self.jobs.append(Job(from_reference, to_do, self))
+		self.jobs[len(jobs)-1].start()
 		
+	
+	def clearJobList(self, jobreference):
+		"""
+		Removes calling job from the joblist.
+		@param jobreference: the reference of the job to be canceled
+		"""	
+		if jobreference in self.jobs:
+			self.jobs.remove(jobreference)
+		else:
+			raise ValueError("Wrong jobreference!")
+			
 		
+			
 	def _updateUnitList(self):
 		"""
 		"""

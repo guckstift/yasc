@@ -2,6 +2,7 @@
 #-*- coding:utf-8 -*-
 
 import string
+import threading
 
 class Job(threading.Thread):
 	"""
@@ -9,17 +10,17 @@ class Job(threading.Thread):
 	The possibility to search for more than one unit is not implemented yet.
 	"""
 
-	def __init__(self, ID, from_reference, to_do, manager_reference):
+	def __init__(self, from_reference, to_do, manager_reference):
 		"""
-		@param ID:
 		@param from_reference: the reference of the object needing this job
 		@param to_do: what to do. Contains single word like "grade" or two words like "carry wood".
 		@param manager_reference: the reference of the manager managing all jobs
 		"""
-		self.ID = ID
+		threading.Thread.__init__(self)
 		self.from_reference = from_reference
 		self.to_do = to_do
 		self.manager_reference = manager_reference
+		self.lock = threading.Lock()
 		
 
 	def run(self):
@@ -47,7 +48,10 @@ class Job(threading.Thread):
 		unit = self._searchUnitOrWare(self.endpoint, "unit", "carrier")
 		_ware_name = string.split(self.to_do)[1]
 		ware = self._searchUnitOrWare(unit.coord, "ware", _ware_name)
-		# send carrier to ware let him take it and send him to the endpoint
+		#TODO: send carrier to ware let him take it and send him to the endpoint
+		self.lock.acquire()
+		self.manager_reference.clearJobList(self)
+		self.lock.release()
 		
 		
 	def _grade(self):
@@ -55,7 +59,10 @@ class Job(threading.Thread):
 		Grade an area for a building
 		"""
 		unit = self._searchUnitOrWare(self.endpoint, "unit", "grader")
-		# send grader to endpoint and let him grade the construction area
+		#TODO: send grader to endpoint and let him grade the construction area
+		self.lock.acquire()
+		self.manager_reference.clearJobList(self)
+		self.lock.release()		
 		
 		
 	def _build(self):
@@ -63,7 +70,10 @@ class Job(threading.Thread):
 		Build a building
 		"""
 		unit = self._searchUnitOrWare(self.endpoint, "unit", "builder")
-		# send builder to endpoint and let him build the building
+		#TODO: send builder to endpoint and let him build the building
+		self.lock.acquire()
+		self.manager_reference.clearJobList(self)
+		self.lock.release()		
 		
 		
 	def _learn(self):
@@ -77,11 +87,14 @@ class Job(threading.Thread):
 		if _tool is not None:
 			ware = self._searchUnitOrWare(self.endpoint, "ware", _tool)
 			unit = self._searchUnitOrWare(ware.coord, "unit", "settler")
-			# send settler to tool and change his job
+			#TODO: send settler to tool and change his job
 		else:
 			unit = self._searchUnitOrWare(self.endpoint, "unit", "settler")
-			# change job
-		# wake calling Job (to seize a building)
+			#TODO: change job
+		#TODO: wake calling Job (to seize a building)
+		self.lock.acquire()
+		self.manager_reference.clearJobList(self)
+		self.lock.release()		
 		
 		
 	def _seize(self):
@@ -93,7 +106,10 @@ class Job(threading.Thread):
 		if unit == None:	# only for non-military units
 			self.manager_reference.newJob(self.endpoint, "learn " + _unit_name)
 			# let this job wait until unit is ready
-		# send unit to building and let him seize it
+		#TODO: send unit to building and let him seize it
+		self.lock.acquire()
+		self.manager_reference.clearJobList(self)
+		self.lock.release()		
 		
 		
 	def _searchUnitOrWare(self, coord, unit_ware, search_for):
@@ -107,10 +123,12 @@ class Job(threading.Thread):
 		#TODO: test ware- and settlerlist if they contain the thing you searching for
 		old_dist = 999999999
 		if unit_ware ==  "unit":
+			#TODO: test settlerlist
 			#for entry in se
 			pass
 			
 		elif unit_ware == "ware":
+			#TODO: test warelist
 			for entry in warelist:		# search the hole warelist
 				new_dist = _calcDistance(coord, entry.coord)
 				if new_dist <= 1:	# break the search 
