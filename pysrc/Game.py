@@ -19,7 +19,7 @@ class Game :
 	
 		self.lll = LowLevelLib ()
 		self.inputmanager = InputManager (self)
-		self.gamecontroller = GameController (self)
+		
 		#self.display = Display ()
 		self.viewspace = ViewSpace ()
 		self.curmap = Map (40)
@@ -28,6 +28,7 @@ class Game :
 		self.curmap.heights.setHeight(2,5,1)
 		self.curmap.heights.setHeight(4,5,-1)
 		self.gfxengine = GFXEngine (self.lll, self.viewspace, self.curmap)
+		self.gamecontroller = GameController (self)
 		self.running = False
 		self.starttime = 0
 				
@@ -54,3 +55,15 @@ class Game :
 				frames = 0
 				lasttick = pygame.time.get_ticks ()
 
+
+	def getGfxengine(self):
+		"""
+		@return: the instance of the gfxengine of the game
+		"""
+		return self.gfxengine
+
+	def getInputmanager(self):
+		"""
+		@return: the instance of the inputmanager of the game
+		"""
+		return self.inputmanager

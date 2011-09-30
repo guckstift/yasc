@@ -9,3 +9,4 @@ render
 doc/dias/*.dia
 *~
 *.swp
+__pycache__

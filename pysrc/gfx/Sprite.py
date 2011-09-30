@@ -1,19 +1,19 @@
 
 import pygame
 
-class Sprite :
+class Sprite(object) :
 
 	"""
 	A Sprite is any moveable or immobile, animated object in game scene.
 	"""
 	
-	def __init__ (self, viewspace, surface):
+	def __init__ (self, viewspace, surface, x, y):
 	
 		self.viewspace = viewspace
 		self.surface = surface
 		# coordinates (screen-coordinates)
-		self.x = 0
-		self.y = 0
+		self.x = x
+		self.y = y
 		# sprite-origin
 		self.cx = 0
 		self.cy = 0
@@ -25,6 +25,17 @@ class Sprite :
 		self.startframetime = 0
 		self.fps = 20 # frames per second
 		self.framelen = 50 # framelength in milliseconds
+		
+		self.direction = 0	# the initial direction
+		"""
+		this is:
+			0 - towards right
+			1 - towards down-right 
+			2 - towards down-left
+			3 - towards left
+			4 - towards up-left
+			5 - towards up-right
+		"""
 	
 	def configAnimation (self, enable, start, end, fps):
 	
@@ -52,4 +63,24 @@ class Sprite :
 				self.startframetime = self.startframetime + self.framelen*(1+self.endframe-self.startframe)
 
 		self.surface.drawToDisplay (display, self.x-self.cx, self.y-self.cy, int(self.frame))
+	
+	def startAnimation(self):
+		"""
+		"""
+		self.animate = True
+	
+	def stopAnimation(self):
+		"""
+		"""
+		self.animate = False
 
+	def getPos(self):
+		"""
+		"""
+		return (self.x, self.y)
+	
+	def getDirection(self):
+		"""
+		@return: you the direction (number) in which the sprite is looking
+		"""
+		return self.direction
