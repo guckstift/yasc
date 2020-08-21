@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>texturator</title>
+		<style>
+			input[type=range] {
+				width: 512px;
+			}
+			
+			label {
+				display: block;
+			}
+		</style>
+	</head>
+	<body>
+		<div>
+			<canvas width="256" height="256" id="canvas"></canvas>
+		</div>
+		<script>
+			let params = {
+				scale: {
+					cur: 1,
+					minv: 1,
+					maxv: 256,
+				},
+				detail: {
+					cur: 0.5,
+					minv: 0,
+					maxv: 1,
+				},
+				contrast: {
+					cur: 1,
+					minv: 0,
+					maxv: 32,
+				}
+			};
+		</script>
+		<div>
+			<script>
+				for(let p in params) {
+					let param = params[p];
+					let label = `
+					<label>
+						<div>${p}:</div>
+						<input type="range"
+								value="${param.cur}"
+								min="${param.minv}" max="${param.maxv}"
+								step="any"
+								oninput="onInputCB('${p}', 'range')">
+						<input type="number"
+								value="${param.cur}"
+								oninput="onInputCB('${p}', 'number')">
+					</label>
+					`;
+					document.write(label);
+				}
+				
+				function onInputCB(prop, type)
+				{
+					params[prop].cur = event.target.value;
+					
+					if(type === "range") {
+						event.target.nextElementSibling.value = event.target.value;
+					}
+					if(type === "number") {
+						event.target.previousElementSibling.value = event.target.value;
+					}
+				}
+			</script>
+		</div>
+		<script>
+			let gl = canvas.getContext("webgl2");
+			let quad = gl.createBuffer();
+			
+			gl.bindBuffer(gl.ARRAY_BUFFER, quad);
+			gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, +1,-1, -1,+1, +1,+1]), gl.STATIC_DRAW);
+			
+			let vertSrc = `#version 300 es
+				
+				in vec2 pos;
+				out vec2 uv;
+				
+				void main()
+				{
+					gl_Position = vec4(pos, 0, 1);
+					uv = pos * 0.5 + 0.5;
+				}
+			`;
+			
+			let fragSrc = `#version 300 es
+				
+				precision mediump float;
+				
+				uniform float scale;
+				uniform float detail;
+				uniform float contrast;
+				in vec2 uv;
+				out vec4 color;
+				
+				float rand(vec2 uv)
+				{
+					return fract(sin(dot(uv, vec2(12.3456, 78.9012))) * 34567.89012);
+				}
+				
+				float blend(float x)
+				{
+					return x * x * x * (x * (x * 6.0 - 15.0) + 10.0);
+				}
+				
+				vec2 blend(vec2 v)
+				{
+					return vec2(blend(v.x), blend(v.y));
+				}
+				
+				vec2 grad(vec2 uv)
+				{
+					float r = radians(rand(uv) * 360.0);
+					
+					return vec2(cos(r), sin(r));
+				}
+				
+				float perlin(vec2 uv)
+				{
+					vec2 iuv = floor(uv);
+					vec2 fuv = fract(uv);
+					vec2 bfuv = blend(fuv);
+					
+					return mix(
+						mix(
+							dot(grad(iuv + vec2(0, 0)), fuv - vec2(0, 0)),
+							dot(grad(iuv + vec2(1, 0)), fuv - vec2(1, 0)),
+							bfuv.x
+						),
+						mix(
+							dot(grad(iuv + vec2(0, 1)), fuv - vec2(0, 1)),
+							dot(grad(iuv + vec2(1, 1)), fuv - vec2(1, 1)),
+							bfuv.x
+						),
+						bfuv.y
+					) * sqrt(2.0);
+				}
+				
+				float fractal(vec2 uv, float pers)
+				{
+					float value = 0.0;
+					float scale = 1.0;
+					float amp = 1.0;
+					float ampsum = 0.0;
+					
+					for(int i=0; i<16; i++) {
+						value += perlin(uv * scale + vec2(i)) * amp;
+						ampsum += amp;
+						scale *= 2.0;
+						amp *= pers;
+					}
+					
+					return value / ampsum;
+				}
+				
+				float noise(vec2 position, float scale, float detail, float contrast)
+				{
+					return clamp(fractal(position * scale, detail) * 0.5 * contrast + 0.5, 0.0, 1.0);
+				}
+				
+				void main()
+				{
+					float value = noise(uv, scale, detail, contrast);
+					color = vec4(vec3(value), 1);
+				}
+			`;
+			
+			let vert = gl.createShader(gl.VERTEX_SHADER);
+			let frag = gl.createShader(gl.FRAGMENT_SHADER);
+			let prog = gl.createProgram();
+			
+			gl.shaderSource(vert, vertSrc);
+			gl.shaderSource(frag, fragSrc);
+			gl.compileShader(vert);
+			gl.compileShader(frag);
+			gl.attachShader(prog, vert);
+			gl.attachShader(prog, frag);
+			gl.linkProgram(prog);
+			
+			console.log("compile vertex shader:", gl.getShaderInfoLog(vert));
+			console.log("compile fragment shader:", gl.getShaderInfoLog(frag));
+			console.log("link shader program:", gl.getProgramInfoLog(prog));
+			
+			gl.useProgram(prog);
+			
+			let pos = gl.getAttribLocation(prog, "pos");
+			
+			gl.enableVertexAttribArray(pos);
+			gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+			
+			requestAnimationFrame(function frame() {
+				gl.uniform1f(gl.getUniformLocation(prog, "scale"), params.scale.cur);
+				gl.uniform1f(gl.getUniformLocation(prog, "detail"), params.detail.cur);
+				gl.uniform1f(gl.getUniformLocation(prog, "contrast"), params.contrast.cur);
+				gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+				requestAnimationFrame(frame);
+			});
+		</script>
+	</body>
+</html>
