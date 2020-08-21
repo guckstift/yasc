@@ -3,25 +3,181 @@
 	<head>
 		<title>texturator</title>
 		<style>
-			input[type=range] {
-				width: 512px;
+			* {
+				box-sizing: border-box;
+			}
+			
+			body {
+				margin: 0;
+				overflow: hidden;
+				font-family: monospace;
+				font-size: 14px;
+			}
+			
+			input[type=range] ,
+			input[type=number] {
+				width: 100%;
+				margin: 0;
 			}
 			
 			label {
 				display: block;
 			}
+			
+			#main {
+				display: flex;
+				height: 100vh;
+			}
+			
+			#canvasPanel {
+				flex:
+			}
+			
+			#nodesPanel {
+				flex: 1;
+				position: relative;
+				user-select: none;
+				overflow: hidden;
+				background: #eee;
+			}
+			
+			#canvas {
+				display: block;
+			}
+			
+			.node {
+				display: block;
+				position: absolute;
+				width: 256px;
+				background: #ccc;
+			}
+			
+			.titlebar {
+				background: blue;
+				color: white;
+				padding: 4px;
+				font-weight: bold;
+			}
+			
+			.body {
+				padding: 4px;
+			}
+			
+			.propnode {
+			}
+			
+			.numberprop {
+			}
 		</style>
+		<script>
+			function createNode(title = "Node Name")
+			{
+				let node = document.createElement("div");
+				
+				node.classList = "node";
+				
+				node.innerHTML = `
+					<div class="titlebar">${title}</div>
+					<div class="body"></div>
+				`;
+				
+				node.style.left = "0";
+				node.style.top = "0";
+				
+				let titlebar = node.querySelector(".titlebar");
+				let body = node.body = node.querySelector(".body");
+				let dragging = false;
+				let startx = 0;
+				let starty = 0;
+				let startl = 0;
+				let startt = 0;
+				
+				titlebar.onmousedown = e => {
+					dragging = true;
+					startx = e.clientX;
+					starty = e.clientY;
+					startl = parseFloat(node.style.left);
+					startt = parseFloat(node.style.top);
+				};
+				
+				window.onmouseup = e => {
+					dragging = false;
+				};
+				
+				window.onmousemove = e => {
+					if(dragging) {
+						let relx = e.clientX - startx;
+						let rely = e.clientY - starty;
+						node.style.left = startl + e.clientX - startx + "px";
+						node.style.top = startt + e.clientY - starty + "px";
+					}
+				};
+				
+				nodesPanel.appendChild(node);
+				
+				return node;
+			}
+			
+			function addScalar(node, name, init, minv, maxv)
+			{
+				let propnode = document.createElement("div");
+				
+				propnode.classList = "propnode";
+				propnode.current = init;
+				
+				propnode.innerHTML = `
+					<div>${name}</div>
+					<input type="range" class="input-range"
+							value="${propnode.current}"
+							min="${minv}" max="${maxv}"
+							step="any">
+					<input type="number" class="input-number"
+							value="${propnode.current}">
+				`;
+				
+				let range = propnode.querySelector(".input-range");
+				let number = propnode.querySelector(".input-number");
+				
+				range.oninput = e => {
+					propnode.current = range.value;
+					number.value = range.value;
+				};
+				
+				number.oninput = e => {
+					propnode.current = number.value;
+					range.value = number.value;
+				};
+				
+				node.body.appendChild(propnode);
+				
+				return propnode;
+			}
+			
+			function createNoiseNode()
+			{
+				let node = createNode("noise");
+				
+				addScalar(node, "scale", 4, 1, 64);
+				addScalar(node, "detail", 0.5, 0, 1);
+				addScalar(node, "contrast", 1.75, 0, 32);
+				
+				return node;
+			}
+		</script>
 	</head>
 	<body>
-		<div>
-			<canvas width="256" height="256" id="canvas"></canvas>
+		<div id="main">
+			<div id="canvasPanel">
+				<canvas width="256" height="256" id="canvas"></canvas>
+			</div>
+			<div id="nodesPanel"></div>
 		</div>
 		<script>
 			let params = {
 				scale: {
-					cur: 1,
+					cur: 4,
 					minv: 1,
-					maxv: 256,
+					maxv: 64,
 				},
 				detail: {
 					cur: 0.5,
@@ -29,7 +185,7 @@
 					maxv: 1,
 				},
 				contrast: {
-					cur: 1,
+					cur: 1.75,
 					minv: 0,
 					maxv: 32,
 				}
@@ -37,6 +193,10 @@
 		</script>
 		<div>
 			<script>
+				createNoiseNode();
+			</script>
+			<!--input type="color" id="head" name="head" value="#ffffff"-->
+			<script>/*
 				for(let p in params) {
 					let param = params[p];
 					let label = `
@@ -65,7 +225,7 @@
 					if(type === "number") {
 						event.target.previousElementSibling.value = event.target.value;
 					}
-				}
+				}*/
 			</script>
 		</div>
 		<script>
@@ -94,6 +254,7 @@
 				uniform float scale;
 				uniform float detail;
 				uniform float contrast;
+				uniform vec3 rgb0, rgb1;
 				in vec2 uv;
 				out vec4 color;
 				
@@ -162,10 +323,75 @@
 					return clamp(fractal(position * scale, detail) * 0.5 * contrast + 0.5, 0.0, 1.0);
 				}
 				
+				vec3 rgb2hsv(vec3 rgb)
+				{
+					float MAX = max(rgb.r, max(rgb.g, rgb.b));
+					float MIN = min(rgb.r, min(rgb.g, rgb.b));
+					float h = 0.0;
+					float s = 0.0;
+					
+					if(MAX == rgb.r) {
+						h = 60.0 * (0.0 + (rgb.g - rgb.b) / (MAX - MIN));
+					}
+					else if(MAX == rgb.g) {
+						h = 60.0 * (2.0 + (rgb.b - rgb.r) / (MAX - MIN));
+					}
+					else if(MAX == rgb.b) {
+						h = 60.0 * (4.0 + (rgb.r - rgb.g) / (MAX - MIN));
+					}
+					
+					if(h < 0.0) {
+						h += 360.0;
+					}
+					
+					if(MAX > 0.0) {
+						s = (MAX - MIN) / MAX;
+					}
+					
+					return vec3(h, s, MAX);
+				}
+				
+				vec3 hsv2rgb(vec3 hsv)
+				{
+					float h = hsv.x, s = hsv.y, v = hsv.z;
+					float hi = floor(h / 60.0);
+					float hf = fract(h / 60.0);
+					float p = v * (1.0 - s);
+					float q = v * (1.0 - s * hf);
+					float t = v * (1.0 - s * (1.0 - hf));
+					
+					if(hi == 0.0 || hi == 6.0)
+						return vec3(v, t, p);
+					else if(hi == 1.0)
+						return vec3(q, v, p);
+					else if(hi == 2.0)
+						return vec3(p, v, t);
+					else if(hi == 3.0)
+						return vec3(p, q, v);
+					else if(hi == 4.0)
+						return vec3(t, p, v);
+					else if(hi == 5.0)
+						return vec3(v, p, q);
+				}
+				
+				vec3 rgbRamp2(float t, vec3 rgb0, vec3 rgb1)
+				{
+					return mix(rgb0, rgb1, t);
+				}
+				
+				vec3 hsvRamp2(float t, vec3 rgb0, vec3 rgb1)
+				{
+					return hsv2rgb(mix(
+						rgb2hsv(rgb0),
+						rgb2hsv(rgb1),
+						t
+					));
+				}
+				
 				void main()
 				{
 					float value = noise(uv, scale, detail, contrast);
-					color = vec4(vec3(value), 1);
+					color = vec4(hsvRamp2(value, vec3(1,0,0), vec3(0,0,1)), 1);
 				}
 			`;
 			
