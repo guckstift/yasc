@@ -53,7 +53,7 @@
 			}
 			
 			.titlebar {
-				background: blue;
+				background: #008;
 				color: white;
 				padding: 4px;
 				font-weight: bold;
@@ -68,6 +68,14 @@
 			
 			.numberprop {
 			}
+			
+			.outputs {
+				padding: 4px;
+			}
+			
+			.outputnode {
+				text-align: right;
+			}
 		</style>
 		<script>
 			function createNode(title = "Node Name")
@@ -79,6 +87,7 @@
 				node.innerHTML = `
 					<div class="titlebar">${title}</div>
 					<div class="body"></div>
+					<div class="outputs"></div>
 				`;
 				
 				node.style.left = "0";
@@ -86,6 +95,7 @@
 				
 				let titlebar = node.querySelector(".titlebar");
 				let body = node.body = node.querySelector(".body");
+				let outputs = node.outputs = node.querySelector(".outputs");
 				let dragging = false;
 				let startx = 0;
 				let starty = 0;
@@ -153,6 +163,21 @@
 				return propnode;
 			}
 			
+			function addOuputScalar(node, name)
+			{
+				let outputnode = document.createElement("div");
+				
+				outputnode.classList = "outputnode";
+				
+				outputnode.innerHTML = `
+					<div>${name}</div>
+				`;
+				
+				node.outputs.appendChild(outputnode);
+				
+				return outputnode;
+			}
+			
 			function createNoiseNode()
 			{
 				let node = createNode("noise");
@@ -160,6 +185,7 @@
 				addScalar(node, "scale", 4, 1, 64);
 				addScalar(node, "detail", 0.5, 0, 1);
 				addScalar(node, "contrast", 1.75, 0, 32);
+				addOuputScalar(node, "factor");
 				
 				return node;
 			}

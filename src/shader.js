@@ -55,6 +55,17 @@ export default class Shader
 		gl.uniformMatrix4fv(loca, false, mat);
 	}
 	
+	setTexture(name, tex, unit)
+	{
+		let gl = this.gl;
+		let prog = this.prog;
+		let loca = gl.getUniformLocation(prog, name);
+		
+		gl.activeTexture(gl.TEXTURE0 + unit);
+		gl.bindTexture(gl.TEXTURE_2D, tex.tex);
+		gl.uniform1i(loca, unit);
+	}
+	
 	setCamera(camera)
 	{
 		this.setMatrix("mat", camera.mat);

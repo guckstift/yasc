@@ -1,60 +1,81 @@
 import Buffer from "./buffer.js";
 import Shader from "./shader.js";
+import Texture from "./texture.js";
 
 let vertSrc = `
 	uniform float mapsize;
 	uniform mat4 mat;
+	uniform sampler2D maptex;
 	out vec2 uv;
+	out float coef;
+	out vec3 norm;
+	
+	ivec2 getMapCoord(int vertId, float mapsize)
+	{
+		return ivec2(
+			mod(float(vertId), mapsize),
+			floor(float(vertId) / mapsize)
+		);
+	}
+	
+	vec3 getVertPos(sampler2D maptex, ivec2 mapcoord)
+	{
+		const float triaHeight = sqrt(3.0) / 2.0;
+		vec2 fmapcoord = vec2(mapcoord);
+		
+		vec2 groundpos = vec2(
+			fmapcoord.x + fmapcoord.y * 0.5,
+			fmapcoord.y * triaHeight
+		);
+		
+		vec4 texel = texelFetch(maptex, mapcoord, 0) * 255.0;
+		float height = texel.r / 2.0;
+		
+		return vec3(groundpos, height);
+	}
+	
+	vec3 getNormal(sampler2D maptex, ivec2 mapcoord)
+	{
+		vec3 v  = getVertPos(maptex, mapcoord);
+		vec3 r  = getVertPos(maptex, mapcoord + ivec2(+1, 0)) - v;
+		vec3 ru = getVertPos(maptex, mapcoord + ivec2( 0,+1)) - v;
+		vec3 lu = getVertPos(maptex, mapcoord + ivec2(-1,+1)) - v;
+		vec3 l  = getVertPos(maptex, mapcoord + ivec2(-1, 0)) - v;
+		vec3 ld = getVertPos(maptex, mapcoord + ivec2( 0,-1)) - v;
+		vec3 rd = getVertPos(maptex, mapcoord + ivec2(+1,-1)) - v;
+		
+		return normalize(
+			cross(r, ru) + cross(ru, lu) + cross(lu, l) + cross(l, ld) + cross(ld, rd) + cross(rd, r)
+		);
+	}
 	
 	void main()
 	{
-		const float triaHeight = sqrt(3.0) / 2.0;
+		const vec3 sun = normalize(vec3(-1,-1,+1));
 		
-		vec2 coord = vec2(
-			mod(float(gl_VertexID), mapsize),
-			floor(float(gl_VertexID) / mapsize)
-		);
+		ivec2 mapcoord = getMapCoord(gl_VertexID, mapsize);
+		vec3 vertpos = getVertPos(maptex, mapcoord);
+		vec3 normal = getNormal(maptex, mapcoord);
 		
-		vec2 groundpos = vec2(
-			coord.x + coord.y * 0.5,
-			coord.y * triaHeight
-		);
-		
-		gl_Position = mat * vec4(groundpos, 0, 1);
-		
-		uv = groundpos;
+		gl_Position = mat * vec4(vertpos, 1);
+		coef = dot(normal, sun) * 4.0 - 1.5;
+		//coef = clamp(dot(normal, sun) * 3.0 - 1.0, 0.0, 1.0);
+		//coef = clamp(dot(normal, sun), 0.0, 1.0);
+		norm = normal;
+		uv = vertpos.xy;
 	}
 `;
 
 let fragSrc = `
+	uniform sampler2D tex;
 	in vec2 uv;
+	in float coef;
 	out vec4 color;
 	
-	float random(vec2 uv)
-	{
-		uint x = uint(uv.x * 15485863.0);
-		uint y = uint(uv.y * 285058399.0);
-		
-		if(x == 0u || y == 0u) {
-			x += x ^ y;
-		}
-		else {
-			x ^= x + y;
-		}
-		
-		x ^= x >> 2;   // xor with r-shift with 1. prime
-		x ^= x << 5;   // xor with l-shift with 3. prime
-		x ^= x >> 11;  // xor with r-shift with 5. prime
-		x ^= x << 17;  // xor with l-shift with 7. prime
-		x ^= x >> 23;  // xor with r-shift with 9. prime
-		x ^= x << 31;  // xor with l-shift with 11. prime
-		
-		return float(x) / float(0xffFFffFFu);
-	}
-
 	void main()
 	{
-		color = vec4(vec3(random(uv)),1);
+		color = texture(tex, uv / 4.0, 0.0);
+		color.rgb *= coef;
 	}
 `;
 
@@ -82,6 +103,15 @@ export default class Map
 		this.display = display;
 		this.shader = new Shader(display, vertSrc, fragSrc);
 		this.vertcount = indices.length;
+		this.tex = new Texture(display, "gfx/grass2.png");
+		this.maptex = new Texture(display, null, size, size);
+		this.data = new Uint8Array(size * size * 4);
+	}
+	
+	setHeight(x, y, h)
+	{
+		this.data[4 * (x + y * this.size)] = h;
+		this.maptex.update(this.data);
 	}
 	
 	draw(camera)
@@ -90,6 +120,8 @@ export default class Map
 		let display = this.display;
 		
 		shader.use();
+		shader.setTexture("tex", this.tex, 0);
+		shader.setTexture("maptex", this.maptex, 1);
 		shader.setIndices(this.indexbuf);
 		shader.setFloat("mapsize", this.size);
 		shader.setCamera(camera);

@@ -18,6 +18,9 @@ export default class Display
 		this.canvas = canvas;
 		this.gl = gl;
 		
+		gl.enable(gl.DEPTH_TEST);
+		//gl.depthFunc(gl.GREATER);
+		
 		requestAnimationFrame(this.frame);
 		
 		this.framecb = () => {};
