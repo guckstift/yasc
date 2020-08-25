@@ -11,14 +11,15 @@ export default class Camera
 	{
 		this.display = display;
 		this.mat = mat4.create();
-		window.pos = this.pos = vec3.create();
+		this.pos = vec3.create();
+		this.scale = 64;
 	}
 	
 	update()
 	{
 		let display = this.display;
 		mat4.identity(this.mat);
-		mat4.scale(this.mat, this.mat, [triaWidth * 2 / display.width, triaWidth * 2 / display.height, -1/256]);
+		mat4.scale(this.mat, this.mat, [this.scale * 2 / display.width, this.scale * 2 / display.height, -1/256]);
 		//mat4.perspective(this.mat, glm.toRadian(90), this.display.getAspect(), 0.1, 1000.0);
 		mat4.translate(this.mat, this.mat, [0, 0, 4-4]);
 		mat4.rotateX(this.mat, this.mat, -viewAngle);
