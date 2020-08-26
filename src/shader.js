@@ -46,6 +46,15 @@ export default class Shader
 		gl.uniform1f(loca, val);
 	}
 	
+	setVec2(name, v)
+	{
+		let gl = this.gl;
+		let prog = this.prog;
+		let loca = gl.getUniformLocation(prog, name);
+		
+		gl.uniform2fv(loca, v);
+	}
+	
 	setMatrix(name, mat)
 	{
 		let gl = this.gl;

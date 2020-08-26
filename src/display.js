@@ -2,7 +2,7 @@ export default class Display
 {
 	constructor()
 	{
-		this.frame = this.frame.bind(this);
+		this.onframe = this.onframe.bind(this);
 		
 		let canvas = document.createElement("canvas");
 		let gl = canvas.getContext("webgl2", {antialias: false, alpha: false});
@@ -19,11 +19,10 @@ export default class Display
 		this.gl = gl;
 		
 		gl.enable(gl.DEPTH_TEST);
-		//gl.depthFunc(gl.GREATER);
 		
-		requestAnimationFrame(this.frame);
+		requestAnimationFrame(this.onframe);
 		
-		this.framecb = () => {};
+		this.frame = () => {};
 	}
 	
 	getAspect()
@@ -40,11 +39,11 @@ export default class Display
 		return this.canvas.height;
 	}
 	
-	frame()
+	onframe()
 	{
 		let gl = this.gl;
 		
-		requestAnimationFrame(this.frame);
+		requestAnimationFrame(this.onframe);
 		
 		let w = this.canvas.clientWidth;
 		let h = this.canvas.clientHeight;
@@ -55,7 +54,7 @@ export default class Display
 			gl.viewport(0, 0, w, h);
 		}
 		
-		this.framecb();
+		this.frame();
 	}
 	
 	trianglestrip(count, indexed = false)

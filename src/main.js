@@ -7,13 +7,14 @@ let display = new Display();
 let map = new Map(display, 16);
 let camera = new Camera(display);
 let mouse = new Mouse(display);
+let pickCoord = undefined;
 
 map.setHeight(2, 2, 1);
 
-display.framecb = function ()
+display.frame = function ()
 {
 	camera.update();
-	map.draw(camera);
+	map.draw(camera, pickCoord);
 }
 
 mouse.down.right = e => {
@@ -28,6 +29,10 @@ mouse.move = e => {
 	if(mouse.locked) {
 		camera.pos[0] += mouse.rel[0] / camera.scale;
 		camera.pos[1] -= mouse.rel[1] / camera.scale;
+		pickCoord = undefined;
+	}
+	else {
+		pickCoord = map.pick(camera, mouse.pos[0], mouse.pos[1]);
 	}
 };
 
